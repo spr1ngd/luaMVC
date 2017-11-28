@@ -1,0 +1,171 @@
+fileFormatVersion: 2
+guid: dd9e9c35d39f7be4aaec48f94ca846d5
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: cu_puppy_head
+    100004: cu_puppy_hips
+    100006: cu_puppy_jaw
+    100008: cu_puppy_L_arm
+    100010: cu_puppy_L_ear
+    100012: cu_puppy_L_eye_down
+    100014: cu_puppy_L_eye_up
+    100016: cu_puppy_L_finger
+    100018: cu_puppy_L_finger_end
+    100020: cu_puppy_L_foot
+    100022: cu_puppy_L_forearm
+    100024: cu_puppy_L_hand
+    100026: cu_puppy_L_knee
+    100028: cu_puppy_L_leg
+    100030: cu_puppy_L_shin
+    100032: cu_puppy_L_shoulder
+    100034: cu_puppy_L_toe
+    100036: cu_puppy_L_toe_end
+    100038: cu_puppy_neck0
+    100040: cu_puppy_neck1
+    100042: cu_puppy_R_arm
+    100044: cu_puppy_R_ear
+    100046: cu_puppy_R_eye_down
+    100048: cu_puppy_R_eye_up
+    100050: cu_puppy_R_finger
+    100052: cu_puppy_R_finger_end
+    100054: cu_puppy_R_foot
+    100056: cu_puppy_R_forearm
+    100058: cu_puppy_R_hand
+    100060: cu_puppy_R_knee
+    100062: cu_puppy_R_leg
+    100064: cu_puppy_R_shin
+    100066: cu_puppy_R_shoulder
+    100068: cu_puppy_R_toe
+    100070: cu_puppy_R_toe_end
+    100072: cu_puppy_spine
+    100074: cu_puppy_spine1
+    100076: cu_puppy_spine2
+    100078: cu_puppy_tail0
+    100080: cu_puppy_tail1
+    100082: cu_puppy_tail2
+    100084: cu_puppy_tail3
+    100086: cu_puppy_tongue
+    100088: cu_puppy_tongue1
+    100090: cu_puppy_transform7
+    100092: cu_puppy_transform8
+    400000: //RootNode
+    400002: cu_puppy_head
+    400004: cu_puppy_hips
+    400006: cu_puppy_jaw
+    400008: cu_puppy_L_arm
+    400010: cu_puppy_L_ear
+    400012: cu_puppy_L_eye_down
+    400014: cu_puppy_L_eye_up
+    400016: cu_puppy_L_finger
+    400018: cu_puppy_L_finger_end
+    400020: cu_puppy_L_foot
+    400022: cu_puppy_L_forearm
+    400024: cu_puppy_L_hand
+    400026: cu_puppy_L_knee
+    400028: cu_puppy_L_leg
+    400030: cu_puppy_L_shin
+    400032: cu_puppy_L_shoulder
+    400034: cu_puppy_L_toe
+    400036: cu_puppy_L_toe_end
+    400038: cu_puppy_neck0
+    400040: cu_puppy_neck1
+    400042: cu_puppy_R_arm
+    400044: cu_puppy_R_ear
+    400046: cu_puppy_R_eye_down
+    400048: cu_puppy_R_eye_up
+    400050: cu_puppy_R_finger
+    400052: cu_puppy_R_finger_end
+    400054: cu_puppy_R_foot
+    400056: cu_puppy_R_forearm
+    400058: cu_puppy_R_hand
+    400060: cu_puppy_R_knee
+    400062: cu_puppy_R_leg
+    400064: cu_puppy_R_shin
+    400066: cu_puppy_R_shoulder
+    400068: cu_puppy_R_toe
+    400070: cu_puppy_R_toe_end
+    400072: cu_puppy_spine
+    400074: cu_puppy_spine1
+    400076: cu_puppy_spine2
+    400078: cu_puppy_tail0
+    400080: cu_puppy_tail1
+    400082: cu_puppy_tail2
+    400084: cu_puppy_tail3
+    400086: cu_puppy_tongue
+    400088: cu_puppy_tongue1
+    400090: cu_puppy_transform7
+    400092: cu_puppy_transform8
+    7400000: Take 001
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 0
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 0.01
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

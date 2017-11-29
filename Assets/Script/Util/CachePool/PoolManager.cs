@@ -48,11 +48,15 @@ namespace Game
                 }
             }
         }
+        // todo PoolManager的释放需要luaMVC框架来统一管理
         public void OnRelease()
         {
-            foreach (var pair in m_pools)
-                pair.Value.OnRelease();
-            m_pools.Clear();
+            lock (m_syncRoot)
+            {
+                foreach (var pair in m_pools)
+                    pair.Value.OnRelease();
+                m_pools.Clear();
+            }
         }
     }
 }

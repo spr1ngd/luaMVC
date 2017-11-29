@@ -1,4 +1,7 @@
 ﻿
+// 是否启用PoolManager自动管理ObjectPool
+#define ENABLE_POOL_MANAGER
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -37,7 +40,6 @@ namespace Game
         {
             this.name = name;
             OnInitialze();
-            PoolManager.Instance.AddPool(this);
         }
 
         // 压入空闲队列
@@ -89,6 +91,9 @@ namespace Game
         {
             busyList = new List<T>();
             idleList = new List<T>();
+#if ENABLE_POOL_MANAGER
+            PoolManager.Instance.AddPool(this);
+#endif
         }
         public virtual void OnRelease()
         {

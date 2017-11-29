@@ -31,7 +31,7 @@ namespace Game
 
         public override void OnRegister()
         {
-            var configs = JsonFS.Instance.File2Object<List<IPAddress>>("ServerAddress.json");
+            var configs = JsonFS.Instance.File2Object<List<IPAddress>>("ServerAddress");
 #if UNITY_DEVELOPMENT
             foreach (var ipAddress in configs)
                 if (ipAddress.address == "development")

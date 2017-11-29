@@ -68,11 +68,7 @@ namespace PureMVC.Patterns
         }
         public void NotifyObservers(INotification notification)
         {
-            //todo 把Luabserver 和 Observer合并之后，就可以解决这里的尿路分叉问题
-            //todo luaNotification 和 notification合并
-            UnityEngine.Debug.Log(notification.Name);
             Observers.Instance.NotifyObservers(notification);
-            LuaFacade.Instance.NotifyObservers(notification);
         }
 
         #region Command || Mediator || Proxy || Handler

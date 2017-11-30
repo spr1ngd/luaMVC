@@ -14,6 +14,18 @@ namespace Game
 
         public AudioEntryMediator(AudioEntry entry):base(NAME,entry){}
 
+        public override void OnRegister()
+        {
+            base.OnRegister();
+            AudioEntry.OnInitialize();
+        }
+
+        public override void OnRemove()
+        {
+            base.OnRemove();
+            AudioEntry.OnRelease();
+        }
+
         public override void HandleNotification(INotification notification)
         {
             switch (notification.Name)

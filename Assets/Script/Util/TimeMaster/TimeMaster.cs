@@ -1,75 +1,42 @@
 ﻿
-using UnityEngine;
-using UnityEngine.Events;
-
-namespace Game
+namespace LuaMVC
 {
+    using System.Collections.Generic;
+    using UnityEngine;
+
     public class TimeMaster : MonoBehaviour
     {
-        public UnityAction ActTimeUp = null;
-        public UnityAction<TimeEvent> ActTimeRemain = null;
-        public UnityAction ActTimeWarning = null;
+        private static TimeMaster m_instance = null;
+        private IDictionary<string,ITimer> m_timers = new Dictionary<string, ITimer>();
 
-        // todo 这个值可以由外界来配置
-        public float UpperLimitTime = 10.0f;
-        public float RewardSecond = 0.3f;
-        public float PunishmentSeconds = 2.0f;
-
-        private float Timing = 0.0f;
-        private TimeEvent timeEvent ;
-        private bool timing = false;
-
-        private void Awake()
+        public static TimeMaster Instance
         {
-            timeEvent = new TimeEvent(UpperLimitTime,UpperLimitTime);
-        }
-
-        private void Update()
-        {
-            if (timing)
+            get
             {
-                Timing += Time.deltaTime;
-                if (Timing >= UpperLimitTime)
+                if (null == m_instance)
                 {
-                    ActTimeUp();
-                    Timing = 0;
-                    timeEvent.RemainTime = 0;
-                    ActTimeRemain(timeEvent);
-                    timing = false;
+                    // todo 需不需要分担到另一个游戏物体？可有效预防游戏物体被误删之后，自动恢复
+                    GameObject timeMaster = new GameObject("TimeMaster");
+                    m_instance = timeMaster.AddComponent<TimeMaster>();
                 }
-                timeEvent.RemainTime = UpperLimitTime - Timing;
-                ActTimeRemain(timeEvent);
-                if (timeEvent.RemainTime < timeEvent.UpperLimitTime * .2f)
-                    ActTimeWarning();
+                return m_instance;
             }
         }
 
-        public void TimeIn()
+        public void AddTimer( string timerName,ITimer timer )
         {
-            timing = true;
+            if (m_timers.ContainsKey(timerName))
+                return;
+            m_timers.Add(timerName,timer);
         }
 
-        public void AddUpperTime( float addTime )
+        public void RemoveTimer( string timerName )
         {
-            UpperLimitTime += addTime;
-        }
-
-        public void AddTime()
-        {
-            Timing -= RewardSecond;
-            if (Timing <= 0)
-                Timing = 0;
-        }
-
-        public void ReduceTime()
-        {
-            Timing += PunishmentSeconds;
-        }
-
-        public void Restart()
-        {
-            timeEvent = new TimeEvent(UpperLimitTime, UpperLimitTime);
-            timing = true;
+            if (m_timers.ContainsKey(timerName))
+            {
+                m_timers[timerName].TimeOut();
+                m_timers.Remove(timerName);
+            }
         }
     }
 }

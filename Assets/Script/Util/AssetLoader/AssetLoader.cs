@@ -22,7 +22,6 @@ namespace LuaMVC
                 {
                     T obj = loader.bytes as T;
                     callback(obj);
-                    Debug.Log("Click audio");
                 }
             }
         }

@@ -1,0 +1,16 @@
+[
+    {
+        "address":"development",
+        "ipAdress":{
+            "host":"127.0.0.1",
+            "port":3344
+        }
+    },
+    {
+        "address":"product",
+        "ipAdress":{
+            "host":"127.0.0.1",
+            "port":3344
+        }
+    }
+]

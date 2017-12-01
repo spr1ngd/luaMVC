@@ -1,4 +1,4 @@
-﻿namespace Game
+﻿namespace LuaMVC
 {
     using UnityEngine;
     public class GameObjectPool : ObjectPool<GameObject>

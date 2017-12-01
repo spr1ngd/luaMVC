@@ -1,7 +1,7 @@
 ﻿
 using System.Collections.Generic;
 
-namespace Game
+namespace LuaMVC
 {
     public class PoolManager
     {

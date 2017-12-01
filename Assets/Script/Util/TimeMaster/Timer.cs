@@ -1,94 +1,82 @@
 ﻿
-using System;
-
 namespace LuaMVC
 {
-    public interface ITimer
-    {
-        string name { get; set; }
-        float havetime { get; set; }
-        bool timeScaleEffect { get; set; }
-        void TimeIn();
-        void TimeOut();
-        void PauseTimer();
-        void ResumeTimer();
-    }
+    using System;
+    using System.Collections.Generic;
 
-    public interface ISkillTimer : ITimer
+    public class IntervalEvent
     {
-        float maxtime { get; set; }
-        void TimeBuff(float buff);
-        void TimeDsbuff(float dsbuff);
-    }
+        public float intervalTime { get; private set; }
+        public bool actionRepeat { get; private set; }
+        public Action intervalAction { get; private set; }
+        public int intervalPointer { get; set; }
 
-    // todo example 1.做一个游戏计时器
-    // todo example 2.做一个技能冷却
-    // todo example 3.做一个倒计时功能 countdown
-    // todo example 4.做一个可记录的计时器 利用系统事件来处理即可
+        public IntervalEvent( float interval,Action intervalMethod,bool actionRepeat = false )
+        {
+            this.intervalTime = interval;
+            this.intervalAction = intervalMethod;
+            this.actionRepeat = actionRepeat;
+            intervalPointer = 0;
+        }
+    }
+    
     public class Timer : ITimer
     {
-        public string name { get; set; }
-        public float havetime { get; set; }
-        public bool timeScaleEffect { get; set; }
-        public Action TimeInAction { private get; set; }
-        public Action<float> TimingAction { private get; set; }
-        public Action<float> TimeOutAction { private get; set; }
+        public string name { get; }
+        public float elapsed { get; set; }
+        public bool timing { get; private set; }
+        public bool timeScaleEffect { get; }
+        public IList<IntervalEvent> intervalEvents { get; set; }
 
-        // todo 构造完之后将其自动注入到TimeMaster，TimeMaster可用Instance和消息来通知
-        public Timer()
-        {
-            
-        }
-        public Timer(string timerName, bool timeScaleEffect = true, Action timeInAction = null, Action<float> timeOutAction = null, Action<float> timingAction = null)
+        public Action OnStartTimeAction { get; set; }
+        public Action<float> OnCloseTimeAction { get; set; }
+        public Action<float> OnTimingAction { get; set; }
+
+        public Timer(string timerName, bool timeScaleEffect = true)
         {
             this.name = timerName;
+            this.timing = false;
             this.timeScaleEffect = timeScaleEffect;
-            this.havetime = 0.0f;
-            this.TimeInAction = timeInAction;
-            this.TimeOutAction = timeOutAction;
-            this.TimingAction = timingAction;
+            this.elapsed = 0.0f;
+            TimeMaster.Instance.AddTimer(this);
         }
 
-        public virtual void TimeIn()
+        public void AddIntervalEvent( IntervalEvent intervalEvent )
+        { 
+            if( null == intervalEvents)
+                intervalEvents = new List<IntervalEvent>();
+            intervalEvents.Add(intervalEvent);
+        }
+        public void AddIntervalEvent(float interval, Action intervalAction, bool repeat = false)
         {
-            havetime = 0.0f;
-            if (null != TimeInAction)
-                TimeInAction();
+            AddIntervalEvent(new IntervalEvent(interval, intervalAction, repeat));
         }
 
-        public virtual void TimeOut()
+        public virtual void StartTime()
         {
-            if (null != TimeOutAction)
-                TimeOutAction(havetime);
+            elapsed = 0.0f;
+            timing = true;
+            if (null != OnStartTimeAction)
+                OnStartTimeAction();
         }
-
-        public virtual void PauseTimer()
+        public virtual void CloseTime()
         {
-            throw new NotImplementedException();
+            timing = false;
+            if (null != OnCloseTimeAction)
+                OnCloseTimeAction(elapsed);
         }
-
-        public virtual void ResumeTimer()
+        public virtual void PauseTime()
         {
-            throw new NotImplementedException();
+            timing = false;
         }
-    }
-
-    public class SkillTimer : Timer , ISkillTimer
-    {
-        public float maxtime { get; set; }
-        public void TimeBuff(float buff)
+        public virtual void ResumeTime()
         {
-            throw new NotImplementedException();
+            timing = true;
         }
-
-        public void TimeDsbuff(float dsbuff)
+        public virtual void ClearTime()
         {
-            throw new NotImplementedException();
+            CloseTime();
+            elapsed = 0.0f;
         }
-    }
-
-    public class Countdown : Timer
-    {
-
     }
 }

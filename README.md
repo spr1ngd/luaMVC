@@ -16,4 +16,5 @@
 -  v0.5.3 新增AssetLoader_Bate版
 -  v0.5.4 新增协同程序管理器
 -  v0.5.5 新增AssetPackager_Beta版
--  v0.5.6 新增TimeMaster模块
+-  v0.5.6 新增[TimeMaster模块]()
+-  v0.5.7 TimeMaster模块新增功能

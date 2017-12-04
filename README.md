@@ -16,5 +16,8 @@
 -  v0.5.3 新增AssetLoader_Bate版
 -  v0.5.4 新增协同程序管理器
 -  v0.5.5 新增AssetPackager_Beta版
--  v0.5.6 新增[TimeMaster模块](https://github.com/ll4080333/luaMVC/blob/master/Documents/TimeMaster.md)
--  v0.5.7 [TimeMaster模块](https://github.com/ll4080333/luaMVC/blob/master/Documents/TimeMaster.md)新增功能(计时器/技能计时器/倒计时器/记录计时器(可离线计时))
+-  v0.5.6 新增[TimeMaster模块]()
+-  v0.5.7 [TimeMaster模块]()新增功能
+-  v0.5.8 更新[Packager模块]()，支持预制物/lua脚本打包和生成md5校验表
+-  v0.5.9 新增[ViewMaster]()，优化中介者中拆装箱的操作
+-  v0.6 新增[CommonUtil工具类]()

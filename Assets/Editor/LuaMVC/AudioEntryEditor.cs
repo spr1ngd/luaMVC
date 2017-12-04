@@ -31,7 +31,7 @@ namespace LuaMVC.Editor
             JsonFS.Instance.Object2File("AudioClips", audioClips);
         }
 
-        private static void Write2Dic( DirectoryInfo dir )
+        private static void Write2Dic(DirectoryInfo dir)
         {
             var files = dir.GetFiles();
             for (int i = 0; i < files.Length; i++)
@@ -47,7 +47,7 @@ namespace LuaMVC.Editor
                 }
             }
             var childDirs = dir.GetDirectories();
-            for( int i = 0 ; i < childDirs.Length;i++ )
+            for (int i = 0; i < childDirs.Length; i++)
                 Write2Dic(childDirs[i]);
         }
     }

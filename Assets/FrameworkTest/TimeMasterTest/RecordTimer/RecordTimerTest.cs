@@ -12,7 +12,6 @@ public class RecordTimerTest : MonoBehaviour
 
     private void Awake()
     {
-        PlayerPrefs.DeleteAll();
         recordTimer = (IRecordTimer)TimeMaster.Instance.GetTimer("GlodenTreasure");
 
         if (null == recordTimer)

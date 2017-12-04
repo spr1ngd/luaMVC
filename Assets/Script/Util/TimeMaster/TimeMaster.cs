@@ -1,16 +1,10 @@
 ﻿
-using System;
-using Game;
-
 namespace LuaMVC
 {
+    using System;
     using System.Collections.Generic;
     using UnityEngine;
-    
-    // example 1.做一个游戏计时器
-    // example 2.做一个技能冷却
-    // example 3.做一个倒计时功能 countdown
-    // todo example 4.做一个可记录的计时器 利用系统事件来处理即可
+
     public class TimeMaster : MonoBehaviour
     {
         // 构造一个计时器池，用于优化计时器的构造
@@ -119,8 +113,7 @@ namespace LuaMVC
             }
             return null;
         }
-
-        // 出库
+        
         public void Read()
         {
             string recordTimers = PlayerPrefs.GetString("RecordTimers");
@@ -144,8 +137,6 @@ namespace LuaMVC
                 AddTimer(record);
             }
         }
-
-        // 入库
         public void Record()
         {
             List<RecordTimer> timers = new List<RecordTimer>();

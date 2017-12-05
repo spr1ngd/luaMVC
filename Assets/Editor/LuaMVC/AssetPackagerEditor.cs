@@ -57,6 +57,7 @@ namespace LuaMVC.Editor
         public static void PackAll()
         {
             BuildPipeline.BuildAssetBundles(FilePath.normalPath, currentBuildOptions, currentBuildTarget);
+            WriteMD5(FilePath.normalPath);
             AssetDatabase.Refresh();
         }
         public static void PackSelected()
@@ -72,6 +73,7 @@ namespace LuaMVC.Editor
             }
             IList<AssetBundleBuild> builds = new List<AssetBundleBuild>() { build };
             BuildPipeline.BuildAssetBundles(FilePath.normalPath + "Assetbundle/", builds.ToArray(), currentBuildOptions, currentBuildTarget);
+            WriteMD5(FilePath.normalPath + "Assetbundle/");
             AssetDatabase.Refresh();
         }
 
@@ -98,48 +100,80 @@ namespace LuaMVC.Editor
         #endregion
 
         private static List<AssetBundleBuild> buildItems = new List<AssetBundleBuild>();
+        private static string md5listPath = Application.dataPath + "/StreamingAssets/md5list.txt";
+        private static string prefabsPath = Application.dataPath + "/Resources/Prefabs/";
+        private static string luaScriptPath = Application.dataPath + "/Script/Resources/";
+        private static string prefabsTargetPath = Application.streamingAssetsPath + "/Assetbundle";
+        private static string luaScriptTargetPath = Application.streamingAssetsPath + "/Lua";
 
         private static void PackAssetbundle(BuildTarget buildTarget)
         {
-            //  1.自动打包现有的预制物
-            //  2.根据选择判断是否将lua脚本打包为assetbundle包 / 或者直接拷贝代码
-            //  3.生成md5值表，用于版本更新校验
-            // todo 打包预制物
-            string md5listPath = Application.streamingAssetsPath + "/md5list.txt";
-            StreamWriter write = new StreamWriter(md5listPath);
-            string prefabsPath = Application.dataPath + "/Resources/Prefabs/";
+            PackPrefab(buildTarget);
+            PackLua(buildTarget);
+        }
+
+        // 打包prefab
+        private static void PackPrefab(BuildTarget buildTarget)
+        {
             if (Directory.Exists(prefabsPath))
             {
                 buildItems.Clear();
-                PackPrefab(prefabsPath);
+                RecursionPrefab(prefabsPath);
+                // 分文件打包
                 for (int i = 0; i < buildItems.Count; i++)
-                {
-                    BuildPipeline.BuildAssetBundles(Application.streamingAssetsPath + "/Assetbundle/",
-                        new AssetBundleBuild[] { buildItems[i] }, BuildAssetBundleOptions.None, buildTarget);
-                }
-                // write md5list file.
-                WriteMD5(Application.streamingAssetsPath + "/Assetbundle", write);
+                    BuildPipeline.BuildAssetBundles(prefabsTargetPath, new AssetBundleBuild[] { buildItems[i] }, BuildAssetBundleOptions.None, buildTarget);
+                WriteMD5(prefabsTargetPath);
                 buildItems.Clear();
+                AssetDatabase.Refresh();
             }
+        }
 
-            string luaScriptPath = Application.dataPath + "/Script/Resources/";
+        // 打包lua脚本
+        private static void PackLua(BuildTarget buildTarget)
+        {
             if (Directory.Exists(luaScriptPath))
             {
                 buildItems.Clear();
-                PackLuaScript(luaScriptPath);
+                RecursionLuaScript(luaScriptPath);
+                // 分文件打包
                 for (int i = 0; i < buildItems.Count; i++)
-                {
-                    BuildPipeline.BuildAssetBundles(Application.streamingAssetsPath + "/Lua/",
-                        new AssetBundleBuild[] { buildItems[i] }, BuildAssetBundleOptions.None, buildTarget);
-                }
-                WriteMD5(Application.streamingAssetsPath + "/Lua", write);
+                    BuildPipeline.BuildAssetBundles(luaScriptTargetPath, new AssetBundleBuild[] { buildItems[i] }, BuildAssetBundleOptions.None, buildTarget);
+                WriteMD5(luaScriptTargetPath);
                 buildItems.Clear();
+                AssetDatabase.Refresh();
             }
-            write.Dispose();
         }
 
-        // 生成ab包
-        private static void PackPrefab(string dirPath)
+        private static void WriteMD5(string dirPath)
+        {
+            using (StreamWriter write = File.AppendText(md5listPath))
+            {
+                RecursionWriteMD5(dirPath, write);
+            }
+        }
+
+        // 导出md5值
+        private static void RecursionWriteMD5(string dirPath, StreamWriter write)
+        {
+            string[] filesPath = Directory.GetFiles(dirPath);
+            for (int i = 0; i < filesPath.Length; i++)
+            {
+                FileInfo fileInfo = new FileInfo(filesPath[i]);
+                if (fileInfo.Extension.Contains(".unity3d") || fileInfo.Extension.Contains(".manifest") || fileInfo.Extension.Equals(""))
+                {
+                    // todo 这里考虑把路径展示出来 // 或者只记录名字直接在manifest文件中读取路径
+                    string fileName = fileInfo.Name;
+                    string md5Value = Util.md5file(filesPath[i]);
+                    write.WriteLine(fileName + "|" + md5Value);
+                }
+            }
+            string[] childrenPath = Directory.GetDirectories(dirPath);
+            for (int i = 0; i < childrenPath.Length; i++)
+                RecursionWriteMD5(childrenPath[i], write);
+        }
+
+        // 递归打包prefab脚本
+        private static void RecursionPrefab(string dirPath)
         {
             string[] filesPath = Directory.GetFiles(dirPath);
             for (int i = 0; i < filesPath.Length; i++)
@@ -158,29 +192,11 @@ namespace LuaMVC.Editor
             }
             string[] childrenPath = Directory.GetDirectories(dirPath);
             for (int i = 0; i < childrenPath.Length; i++)
-                PackPrefab(childrenPath[i]);
+                RecursionPrefab(childrenPath[i]);
         }
-
-        // 导出md5值
-        private static void WriteMD5(string dirPath,StreamWriter write)
-        {
-            string[] filesPath = Directory.GetFiles(dirPath);
-            for (int i = 0; i < filesPath.Length; i++)
-            {
-                FileInfo fileInfo = new FileInfo(filesPath[i]);
-                if (fileInfo.Extension.Contains(".unity3d") || fileInfo.Extension.Contains(".manifest"))
-                {
-                    string fileName = fileInfo.Name;
-                    string md5Value = Util.md5file(filesPath[i]);
-                    write.WriteLine(fileName + "|" + md5Value);
-                }
-            }
-            string[] childrenPath = Directory.GetDirectories(dirPath);
-            for (int i = 0; i < childrenPath.Length; i++)
-                WriteMD5(childrenPath[i],write);
-        }
-
-        private static void PackLuaScript( string luaPath )
+        
+        // 递归打包lua脚本
+        private static void RecursionLuaScript( string luaPath )
         {
             string[] filesPath = Directory.GetFiles(luaPath);
             for (int i = 0; i < filesPath.Length; i++)
@@ -199,7 +215,7 @@ namespace LuaMVC.Editor
             }
             string[] childrenPath = Directory.GetDirectories(luaPath);
             for (int i = 0; i < childrenPath.Length; i++)
-                PackLuaScript(childrenPath[i]);
+                RecursionLuaScript(childrenPath[i]);
         }
 
         #endregion

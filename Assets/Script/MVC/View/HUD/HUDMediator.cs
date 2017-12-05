@@ -2,6 +2,7 @@
 using System;
 using PureMVC.Patterns;
 using System.Collections.Generic;
+using LuaMVC;
 
 namespace Game
 {
@@ -36,7 +37,7 @@ namespace Game
                     if( null == role )
                         throw new Exception("抓取角色信息失败");
                     //HUDView.UpdatePlayerInfo(role.name,role.level.ToString(),role.maxScore.ToString());
-                    Loom.InvokeAsync((para1,para2,para3) => { HUDView.UpdatePlayerInfo(para1.ToString(),para2.ToString(),para3.ToString()); }, role.name,role.level,role.maxscore);
+                    Loom.InvokeSync((para1,para2,para3) => { HUDView.UpdatePlayerInfo(para1.ToString(),para2.ToString(),para3.ToString()); }, role.name,role.level,role.maxscore);
                     break;
                 case NotificationType.V2V_GAME_START:
                     HUDView.Restart();

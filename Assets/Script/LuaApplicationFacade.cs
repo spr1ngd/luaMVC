@@ -14,7 +14,6 @@ namespace Game
     [LuaCallCSharp]
     public class LuaApplicationFacade : LuaFacade
     {
-        // 全局唯一lua环境变量
         public static LuaEnv luaEnv = new LuaEnv();
         private LuaTable scriptEnv = null;
         private Action ondestroy = null;
@@ -23,6 +22,7 @@ namespace Game
         {
             Debug.Log("lua PureMVC framework start up...");
             luaEnv.AddLoader(Loader);
+            luaEnv.AddLoader(LuaPathLoader);
             this.scriptEnv = luaEnv.NewTable();
             LuaTable meta = luaEnv.NewTable();
             meta.Set("__index", luaEnv.Global);
@@ -35,7 +35,6 @@ namespace Game
             if (null != awake)
                 awake();
         }
-
         public void ShutDown()
         {
             Debug.Log("lua PureMVC framework start up...");
@@ -49,10 +48,15 @@ namespace Game
             string fullPath = Application.dataPath + "/Script/Resources/" + filePath + ".lua.txt";
             return File.ReadAllText(fullPath);
         }
-
         private byte[] Loader(ref string filePath)
         {
             string fullPath = Application.dataPath + "/Script/Resources/" + filePath + ".lua.txt";
+            return Encoding.UTF8.GetBytes(File.ReadAllText(fullPath));
+        }
+        private byte[] LuaPathLoader( ref string filePath )
+        {
+            // todo 这里估计是要改为loadAB包
+            string fullPath = Application.streamingAssetsPath + "/Lua/" + filePath;
             return Encoding.UTF8.GetBytes(File.ReadAllText(fullPath));
         }
 

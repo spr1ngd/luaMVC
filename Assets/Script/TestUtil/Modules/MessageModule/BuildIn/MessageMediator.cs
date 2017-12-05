@@ -1,5 +1,6 @@
 ﻿
 using System.Collections.Generic;
+using LuaMVC;
 using PureMVC.Patterns;
 
 namespace Game
@@ -24,7 +25,7 @@ namespace Game
             {
                 case NotificationType.MESSAGE_BUILDIN:
                     UnityEngine.Debug.Log("登录失败");
-                    Loom.InvokeAsync(data => { MessageView.ShowMessage(data.ToString()); }, notification.Body as string);
+                    Loom.InvokeSync(data => { MessageView.ShowMessage(data.ToString()); }, notification.Body as string);
                     break;
                 case NotificationType.MESSAGE_ANDROID:
 

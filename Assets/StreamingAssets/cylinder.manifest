@@ -1,0 +1,33 @@
+ManifestFileVersion: 0
+CRC: 864642131
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: f841f656af47148e55a03263927e1b14
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 9a4ac46c2fe67e0d8cdae988431355a7
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 135
+  Script: {instanceID: 0}
+- Class: 136
+  Script: {instanceID: 0}
+Assets:
+- Assets/FrameworkTest/AssetPackagerTest/Sphere.prefab
+- Assets/FrameworkTest/AssetPackagerTest/Cylinder.prefab
+Dependencies: []

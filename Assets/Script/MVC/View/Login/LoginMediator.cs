@@ -1,6 +1,7 @@
 ﻿
 using PureMVC.Patterns;
 using System.Collections.Generic;
+using LuaMVC;
 using SimpleJson;
 
 namespace Game
@@ -31,7 +32,7 @@ namespace Game
             switch (notification.Name)
             {
                 case NotificationType.SERVICE_LOGIN_SUCCESS:
-                    Loom.InvokeAsync(LoginView.Close);
+                    Loom.InvokeSync(LoginView.Close);
                     break;
                 case NotificationType.SERVICE_LOGIN_FAILED:
                     SendNotification(NotificationType.MESSAGE_BUILDIN,"账户密码错误，请重新登陆");

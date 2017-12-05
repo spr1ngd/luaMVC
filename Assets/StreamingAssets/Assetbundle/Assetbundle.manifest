@@ -1,7 +1,0 @@
-ManifestFileVersion: 0
-CRC: 1891554335
-AssetBundleManifest:
-  AssetBundleInfos:
-    Info_0:
-      Name: register.prefab.unity3d
-      Dependencies: {}

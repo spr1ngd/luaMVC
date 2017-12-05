@@ -1,0 +1,53 @@
+
+-- 注册面板
+
+local gameObject;
+local transform;
+
+RegisterView = {};
+local this =  RegisterView;
+
+RegisterView.inputs = {}
+
+function RegisterView.awake(obj)
+	gameObject = obj
+	transform = obj.transform
+    transform:Find("Panel/OKButton"):GetComponent("Button").onClick:AddListener(function()
+        RegisterView:onOKClick()
+    end)
+    transform:Find("Panel/CancelButton"):GetComponent("Button").onClick:AddListener(function()
+        RegisterView:onCancelClick()
+    end)
+	RegisterView.inputs["username"] = transform:Find("Panel/username"):GetComponent("InputField")
+	RegisterView.inputs["password1"] = transform:Find("Panel/password1"):GetComponent("InputField")
+	RegisterView.inputs["password2"] = transform:Find("Panel/password2"):GetComponent("InputField")
+	RegisterView.panel = transform:Find("Panel").gameObject	
+end
+
+function RegisterView.onOKClick()
+	if(RegisterView.inputs["password1"].text ~= RegisterView.inputs["password2"].text)
+	then
+		CS.UnityEngine.Debug.Log("两次输入密码不同，请重新输入")
+		RegisterView.inputs["password1"].text = ''
+		RegisterView.inputs["password2"].text = ''
+	else
+		CS.UnityEngine.Debug.Log("注册成功")
+		CS.Game.LuaApplicationFacade.SendNotification(NotificationType.V2S_PLAYER_REGISTER,{username=RegisterView.inputs["username"].text,password=RegisterView.inputs["password1"].text}) 
+		RegisterView.Close()
+	end
+end
+
+function RegisterView.onCancelClick()
+	CS.UnityEngine.Debug.Log("取消注册")
+	RegisterView.Close()
+end
+
+function RegisterView.Open()
+	RegisterView.panel:SetActive(true)
+end
+
+function RegisterView.Close()
+	RegisterView.panel:SetActive(false)
+end
+
+return RegisterView

@@ -1,0 +1,10 @@
+
+NotificationType = {}
+this = NotificationType
+
+this.V2V_GAME_REGISTER = "Register"
+this.V2V_GAME_REGISTER_OK = "RegisterOK"
+
+this.V2S_PLAYER_REGISTER = "PlayerRegister"
+
+return NotificationType

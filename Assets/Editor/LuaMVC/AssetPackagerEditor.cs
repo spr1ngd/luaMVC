@@ -100,7 +100,7 @@ namespace LuaMVC.Editor
         #endregion
 
         private static List<AssetBundleBuild> buildItems = new List<AssetBundleBuild>();
-        private static string md5listPath = Application.dataPath + "/StreamingAssets/md5list.txt";
+        //private static string md5listPath = Application.dataPath + "/StreamingAssets/md5list.txt";
         private static string prefabsPath = Application.dataPath + "/Resources/Prefabs/";
         private static string luaScriptPath = Application.dataPath + "/Script/Resources/";
         private static string prefabsTargetPath = Application.streamingAssetsPath + "/Assetbundle";
@@ -146,7 +146,7 @@ namespace LuaMVC.Editor
 
         private static void WriteMD5(string dirPath)
         {
-            using (StreamWriter write = File.AppendText(md5listPath))
+            using (StreamWriter write = File.AppendText(Application.dataPath + "/StreamingAssets/md5list.txt"))
             {
                 RecursionWriteMD5(dirPath, write);
             }

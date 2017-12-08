@@ -4,18 +4,6 @@ namespace LuaMVC
     using Game;
     using System.Collections.Generic;
 
-    public enum E_ViewType : int
-    {
-        // Framewrok build-in Type
-        Setting,
-
-        // 
-        Login,
-        Register,
-        Ready,
-        Gameing,
-    }
-
     public class ViewMaster : Singleton<ViewMaster>
     {
         private IDictionary<string,IBaseView> m_views = new Dictionary<string, IBaseView>();

@@ -9,23 +9,45 @@ namespace LuaMVC
     {
         public override void Initialize()
         {
+            base.Initialize();
             this.ViewName = E_ViewType.Register;
             QualitySettings.vSyncCount = 0;
             Application.targetFrameRate = 100;
+            m_LastUpdateShowTime = Time.realtimeSinceStartup;
+            Read4PlayerPrefs();
         }
         public override void Open()
         {
             m_showSettingWindow = true;
+            // 打开时更新GUI数据
+            screenFull = Screen.fullScreen ? 0 : 1;
+            ScreenResolution resolution = new ScreenResolution() {width = Screen.width ,height = Screen.height};
+            for (int i = 0; i < screenSizes.Count; i++)
+            {
+                if (screenSizes[i] == resolution)
+                {
+                    screenSize = i;
+                    break;
+                }
+            }
+            vSyncCount = QualitySettings.vSyncCount;
+            for (int i = 0; i < antiAliasingSetting.Length; i++)
+            {
+                if(antiAliasingSetting[i] == QualitySettings.antiAliasing)
+                    antiAliasing = i;
+            }
+            textureQuality = QualitySettings.masterTextureLimit;
+            shadowType = (int)QualitySettings.shadows;
+            shadowQuality = (int)QualitySettings.shadowResolution;
+            for( int i = 0 ; i < shadowDistances.Length;i++ )
+                if (Math.Abs(shadowDistances[i] - QualitySettings.shadowDistance) <= 0)
+                    shadowDistanceIndex = i;
         }
         public override void Close()
         {
             m_showSettingWindow = false;
         }
-
-        void Start()
-        {
-            m_LastUpdateShowTime = Time.realtimeSinceStartup;
-        } 
+        
         void Update()
         {
             m_FrameUpdate++;
@@ -35,8 +57,17 @@ namespace LuaMVC
                 m_FrameUpdate = 0;
                 m_LastUpdateShowTime = Time.realtimeSinceStartup;
             }
-            if (Input.GetKeyDown(KeyCode.Escape))
-                m_showSettingWindow = true;
+            // todo 这个触发可以在这里保留，也可以有Input统一管理
+            if (m_showSettingWindow)
+            {
+                if (Input.GetKeyDown(KeyCode.Escape))
+                    Close();
+            }
+            else
+            {
+                if (Input.GetKeyDown(KeyCode.Escape))
+                    Open();
+            }
         }
         private void OnGUI()
         {
@@ -108,7 +139,6 @@ namespace LuaMVC
         private void DrawSettingWindow( int windowID )
         {
             GUILayout.Label("系统时间：" + DateTime.Now.ToShortTimeString());
-
 #if UNITY_ANDROUD
             GUILayout.Label("剩余电量：" + GetBatteryLevel());
 #elif UNITY_IPHONE
@@ -139,18 +169,13 @@ namespace LuaMVC
                 QualitySettings.vSyncCount = vSyncCount;
                 QualitySettings.antiAliasing = antiAliasingSetting[antiAliasing];
                 QualitySettings.masterTextureLimit = textureQuality;
-                if (screenFull.Equals(0))
-                    Screen.fullScreen = true;
-                else
-                    Screen.fullScreen = false;
+                Screen.fullScreen = screenFull.Equals(0);
                 ScreenResolution size = screenSizes[screenSize];
                 Screen.SetResolution(size.width,size.height, Screen.fullScreen);
                 QualitySettings.shadows = (ShadowQuality)shadowType;
                 QualitySettings.shadowResolution = (ShadowResolution)shadowQuality;
                 QualitySettings.shadowDistance = shadowDistances[shadowDistanceIndex];
-                QualitySettings qs = new QualitySettings();
-                ;
-                Debug.Log(SimpleJson.SimpleJson.SerializeObject(qs));
+                Write2PlayerPrefs();
             }
             if (GUILayout.Button("取消"))
             {
@@ -158,10 +183,94 @@ namespace LuaMVC
             }
         }
 
-        public struct ScreenResolution 
+        public void Write2PlayerPrefs()
         {
-            public int width;
-            public int height;
+            SettingRecord settingRecord = new SettingRecord();
+            settingRecord.fullScreen = Screen.fullScreen;
+            settingRecord.resolution = new ScreenResolution() { width = Screen.width, height = Screen.height };
+            settingRecord.vSyncCount = QualitySettings.vSyncCount;
+            settingRecord.antiAliasing = antiAliasing;
+            settingRecord.masterTextureLimit = QualitySettings.masterTextureLimit;
+            settingRecord.shadowQuality = (int)QualitySettings.shadows;
+            settingRecord.shadowResolution = (int)QualitySettings.shadowResolution;
+            settingRecord.shadowDistance = shadowDistanceIndex;
+            string setting = SimpleJson.SimpleJson.SerializeObject(settingRecord);
+            PlayerPrefs.SetString("SystemSetting", setting);
         }
+        public void Read4PlayerPrefs()
+        {
+            string setting = PlayerPrefs.GetString("SystemSetting");
+            if (string.IsNullOrEmpty(setting))
+            {
+                QualitySettings.vSyncCount = 0;
+                QualitySettings.antiAliasing = 4;
+                QualitySettings.masterTextureLimit = 3;
+                QualitySettings.shadows = ShadowQuality.All;
+                QualitySettings.shadowResolution = ShadowResolution.High;
+                QualitySettings.shadowDistance = 150;
+                return;
+            }
+            SettingRecord record = SimpleJson.SimpleJson.DeserializeObject<SettingRecord>(setting);
+            Screen.fullScreen = record.fullScreen;
+            Screen.SetResolution(record.resolution.width,record.resolution.height,Screen.fullScreen);
+            QualitySettings.vSyncCount = record.vSyncCount;
+            QualitySettings.antiAliasing = antiAliasingSetting[record.antiAliasing];
+            QualitySettings.masterTextureLimit = record.masterTextureLimit;
+            QualitySettings.shadows = (ShadowQuality)record.shadowQuality;
+            QualitySettings.shadowResolution = (ShadowResolution)record.shadowResolution;
+            QualitySettings.shadowDistance = shadowDistances[record.shadowDistance];
+        }
+    }
+
+    [Serializable]
+    public class ScreenResolution
+    {
+        public int width;
+        public int height;
+
+        protected bool Equals(ScreenResolution other)
+        {
+            return width == other.width && height == other.height;
+        }
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((ScreenResolution) obj);
+        }
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (width * 397) ^ height;
+            }
+        }
+        public static bool operator == (ScreenResolution para1,ScreenResolution para2 )
+        {
+            if( para1.width == para2.width && para1.height == para2.height)
+                return true;
+            return false;
+        }
+        public static bool operator !=(ScreenResolution para1, ScreenResolution para2)
+        {
+            if (para1.width == para2.width && para1.height == para2.height)
+                return false;
+            return true;
+        }
+    }
+    [Serializable]
+    public class SettingRecord
+    {
+        // screen
+        public bool fullScreen;
+        public ScreenResolution resolution;
+        // base setting
+        public int vSyncCount;
+        public int antiAliasing;
+        public int masterTextureLimit;
+        public int shadowQuality;
+        public int shadowResolution;
+        public int shadowDistance;
     }
 }

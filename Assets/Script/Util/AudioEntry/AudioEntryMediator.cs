@@ -13,41 +13,25 @@ namespace Game
         }
 
         public AudioEntryMediator(AudioEntry entry):base(NAME,entry){}
-
-        public override void OnRegister()
-        {
-            base.OnRegister();
-            AudioEntry.OnInitialize();
-        }
-
-        public override void OnRemove()
-        {
-            base.OnRemove();
-            AudioEntry.OnRelease();
-        }
-
+         
         public override void HandleNotification(INotification notification)
         {
             switch (notification.Name)
             {
-                case NotificationType.AUDIO_PLAY:
-                    AudioEntry.PlayOneShot(notification.Body as string);
+                // 打开Audio设置面板
+                case NotificationType.AUDIO:
+                    View.Open();
                     break;
-                case NotificationType.AUDIO_VOLUME:
-                    AudioEntry.SetBackgroundAudioVolumn(float.Parse(notification.Body as string));
-                    break;
-                case NotificationType.AUDIO_SOUNDEFFECTVOLUMN:
-                    AudioEntry.SetSoundEffectVolumn(float.Parse(notification.Body as string));
-                    break;
+                case NotificationType.AUDIO_PLAY: 
+                    break; 
             }
         }
 
         public override IList<string> ListNotificationInterests()
         {
             IList<string> notifications = new List<string>();
-            notifications.Add(NotificationType.AUDIO_PLAY);
-            notifications.Add(NotificationType.AUDIO_VOLUME);
-            notifications.Add(NotificationType.AUDIO_SOUNDEFFECTVOLUMN);
+            notifications.Add(NotificationType.AUDIO);
+            notifications.Add(NotificationType.AUDIO_PLAY); 
             return notifications;
         }
     }

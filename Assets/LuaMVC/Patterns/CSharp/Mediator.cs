@@ -60,6 +60,8 @@ namespace PureMVC.Patterns
         }
         public virtual void OnRegister()
         {
+            if( null != View)
+                View.Initialize();
         }
         public virtual void OnRemove()
         {

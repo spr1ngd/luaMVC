@@ -7,6 +7,8 @@ namespace Game
         public const string START = "StartUp";
         public const string QIUT = "ShutDown";
         public const string GAMEOVER = "GameOver";
+        public const string SETTING = "Setting";
+        public const string AUDIO = "AudioEntry";
         
         // MESSAGE 消息通知
         public const string MESSAGE_BUILDIN = "BuildInMessage";

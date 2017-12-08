@@ -1,13 +1,7 @@
 ManifestFileVersion: 0
-CRC: 431641819
+CRC: 4143486704
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
-      Name: cube
-      Dependencies: {}
-    Info_1:
-      Name: cylinder
-      Dependencies: {}
-    Info_2:
       Name: dogs
       Dependencies: {}

@@ -1,32 +1,29 @@
 ﻿
 using LuaMVC;
 using UnityEngine;
-using System.Collections;
-using Game;
+using XLua;
 
 public class AssetLoaderTest : MonoBehaviour
 {
-    void Start()
+    LuaEnv luaEnv = new LuaEnv();
+    private void Start()
     {
-        // AssetLoader
-        AssetLoader.LoadAudioClip("TestFile.txt", ac => { Debug.Log("success load text"); });
-        //StartCoroutine(wwwLoad());
+        AssetLoader loader = this.GetComponent<AssetLoader>();
+        loader.LoadAsset<Object>("dogs", "cu_puppy_corgi", (dog) =>
+        {
+            GameObject.Instantiate(dog);
+        }, null);
+        // cu_puppy_husky_lit
+        loader.LoadAsset<Object>("dogs", "cu_puppy_husky_lit", (dog) =>
+        {
+            var dogGameObject = GameObject.Instantiate(dog) as GameObject;
+            dogGameObject.transform.localPosition += new Vector3(0.3f, 0, 0);
+        }, null);
+        luaEnv.DoString("print('hello world')");
     }
 
-    IEnumerator wwwLoad()
+    private void OnDestroy()
     {
-        WWW www = new WWW(FilePath.prePath +  "TestFile.txt");//BZ34-1-CEPA.assetbundle
-        yield return www;
-        if (null != www.error)
-        {
-            Debug.Log(www.error);
-            yield break;
-        }
-        if (www.isDone)
-        {
-            //var go = www.assetBundle.LoadAsset<GameObject>("BZ34-1-CEPA");
-            //GameObject.Instantiate(go);
-            Debug.Log(www.text);
-        }
+        luaEnv.Dispose();
     }
 }

@@ -10,17 +10,13 @@ namespace Game
         [HideInInspector] public LoginView LoginView = null;
         [HideInInspector] public MessageView MessageView = null;
 	    [HideInInspector] public ReadyView ReadyView = null;
-	    [HideInInspector] public AccountView AccountView = null;
-	    [HideInInspector] public AudioEntry AudioEntry = null;
-	    //[HideInInspector] public TimeMaster TimeMaster = null;
+	    [HideInInspector] public AccountView AccountView = null; 
 
 	    private ApplicationFacade facade = null;
 	    private LuaApplicationFacade luaFacade = null;
 
         private void Awake()
         {
-            AudioEntry = GameObject.Find("__AudioEntry").GetComponent<AudioEntry>();
-            //TimeMaster = GameObject.Find("__TimeMaster").GetComponent<TimeMaster>();
 			HUDView = this.transform.Find ("Battleground/TimerScore").GetComponent<HUDView>();
 		    LoginView = this.transform.Find("Login").GetComponent<LoginView>();
 			ChessboardView = this.transform.Find ("Battleground/ChessboardBackground/Chessboard").GetComponent<ChessboardView> ();

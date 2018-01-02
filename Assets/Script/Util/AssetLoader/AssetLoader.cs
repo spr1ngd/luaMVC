@@ -3,127 +3,270 @@ using System;
 using System.Collections;
 using System.Collections.Generic; 
 using System.IO; 
+using XLua; 
 using UObject = UnityEngine.Object;
 
 namespace LuaMVC
 {
     using UnityEngine;
 
+    [LuaCallCSharp]
     public interface ILuaCallback
     {
-        Action<UObject> luaCallback { get; set; }
+        Action<Object> luaCallback { get; set; } 
     }
-
+    [LuaCallCSharp]
+    public class LuaCallback : ILuaCallback
+    {
+        public Action<UObject> luaCallback { get; set; }
+    }
+    [LuaCallCSharp]
     public class LoadRequest
     {
         public string assetbundleName;
         public string assetName;  
         public Type assetType;
+        public Action<Type> action;
         public Action<UObject> callback;
-        public ILuaCallback luaCallback;
+        public LuaFunction luaCallback;
         public AssetBundleRequest assetRequest;
     }
-
+    [LuaCallCSharp]
     public class LoadedAsset
     {
         public AssetBundle assetbundle;
         public int dependencyCount;
     } 
 
+    [LuaCallCSharp]
     public class AssetLoader : MonoBehaviour
-    {
-        private IDictionary<string,AudioClip> m_audios = new Dictionary<string, AudioClip>();
-        private IDictionary<string,TextAsset> m_texts = new Dictionary<string, TextAsset>();
-        private IDictionary<string,Texture> m_textures = new Dictionary<string, Texture>();
-        private IDictionary<string,AssetBundle> m_assets = new Dictionary<string, AssetBundle>(); 
+    { 
+        // 常量，根据需求修改
+        private static string m_manifestPath = "StreamingAssets";
+        private static string m_manifestName = "AssetBundleManifest";
+        private static string m_assetbundleExtension = ".unity3d";
+        private static string m_prefabPrefixName = "Prefabs/";
 
-        //private string m_assetServerPath = "http://192.168.1.113:8088/"; // todo 这个值应该也有服务器推送
-        private string m_assetServerPath ; 
-        private AssetBundleManifest m_manifest = null;
-        private IList<LoadRequest> m_loadRequests = new List<LoadRequest>();
-        private IDictionary<string, LoadedAsset> m_loadedAssets = new Dictionary<string, LoadedAsset>();
-        private IDictionary<string, string[]> m_dependencies = new Dictionary<string, string[]>();
-        private IDictionary<string, WWW> m_wwws = new Dictionary<string, WWW>();
-        private IDictionary<string,string> m_errors = new Dictionary<string, string>();
+        // todo 这些值全部等待替换
+        private static string m_luaScirptPath = "http://192.168.1.113:8088/StreamingAssets/Lua/";
+        private static string m_localLuaScriptPath { get { return Application.streamingAssetsPath + "/Lua/"; } } 
+        private static string m_serverLuaScriptCheckList = "http://192.168.1.113:8088/StreamingAssets/md5list.txt";
+        private static string m_localMD5ListPath { get { return Application.streamingAssetsPath + "/md5list.txt"; } }
+        private static string m_assetServerPath = "http://192.168.1.113:8088/StreamingAssets/"; // 服务器资源文件夹路径 todo 这个值应该由服务器传递到客户端
 
-        private void Awake()
-        {
-            m_assetServerPath = "file://"+Application.streamingAssetsPath + "/";
-            localMD5ListPath = Application.streamingAssetsPath + "/md5list.txt";
-            OnInitialize();
+        private static AssetBundleManifest m_manifest = null;
+        private static IList<LoadRequest> m_loadRequests = new List<LoadRequest>();
+        private static IDictionary<string, LoadedAsset> m_loadedAssets = new Dictionary<string, LoadedAsset>();
+        private static IDictionary<string, string[]> m_dependencies = new Dictionary<string, string[]>();
+        private static IDictionary<string, WWW> m_wwws = new Dictionary<string, WWW>();
+        private static IDictionary<string,string> m_errors = new Dictionary<string, string>();
+         
+        public static IEnumerator OnInitialize()
+        { 
+            yield return AutomaticUpdateLuaScripts(); 
+            yield return LoadManifest();
         }
 
-        private void OnInitialize()
+        private static IEnumerator LoadManifest()
         {
             if (null == m_manifest)
             {
-                LoadAsset<AssetBundleManifest>("StreamingAssets", "AssetBundleManifest", (obj) =>
+                LoadAsset<AssetBundleManifest>(m_manifestPath, m_manifestName, (obj) =>
                 {
                     m_manifest = obj as AssetBundleManifest;
+                    if (null == m_manifest)
+                        throw new Exception("Load manifest file failed.");
                     m_dependencies.Add("StreamingAssets", m_manifest.GetAllDependencies("StreamingAssets"));
+                    Debug.Log("Load manifest file successfully.");
                 }, null);
             }
+            yield return m_manifest;
         }
 
-        // todo 产生了80B的GC浪费
-        private void Update()
+#if !UNITY_DEVELOPMENT 
+        // 开发使用的API
+        private void Load(string assetPath, Action<UObject> callback)
         {
-            AutoDownload();
+            var obj = Resources.Load(m_prefabPrefixName + assetPath);
+            if ( null == obj )
+                throw new Exception("Load" + assetPath +"failed.");
+            callback(obj);
         }
-
-        private void AutoDownload()
+        public void LoadAsset<T>(string assetName, Action<UObject> callback) where T:UObject
         {
-            IList<string> finishedList = new List<string>();
-            if (m_wwws.Keys.Count <= 0)
-                return; 
-            foreach (KeyValuePair<string, WWW> www in m_wwws)
+            Load( assetName, go =>
             {
+                if (null != callback)
+                    callback(go as T); 
+            }); 
+        } 
+        public void LoadAsset<T>(string assetFullPath, string assetName, Action<UObject> callback) where T : UObject
+        {
+            LoadAsset<T>(assetName, callback);
+        }
+        public void LoadAssetInstantiate<T>(string assetName, Action<UObject> callback) where T : UObject
+        {
+            LoadAsset<T>(assetName, obj =>
+            {
+                GameObject go = GameObject.Instantiate(obj) as GameObject;
+                callback(go);
+            });
+        }
+        public void LoadAssetInstantiate<T>(string assetFullPath, string assetName, Action<UObject> callback) where T : UObject
+        {
+            LoadAsset<T>(assetFullPath,assetName, obj =>
+            {
+                GameObject go = GameObject.Instantiate(obj) as GameObject;
+                callback(go);
+            });
+        }
+
+        public void LoadAsset(string assetName , LuaFunction luaCallback )
+        {   
+            Load(assetName, go =>
+            {
+                if (null != luaCallback)
+                    luaCallback.Call(go); 
+            }); 
+        }
+        public void LoadAsset(string assetFullPath, string assetName, LuaFunction luaCallback)
+        {
+            LoadAsset(assetName, luaCallback);
+        }
+        public void LoadAssetInstantiate(string assetName, LuaFunction luaCallback)
+        {
+            Load(assetName, obj =>
+            {
+                GameObject go = GameObject.Instantiate(obj) as GameObject;
+                if (null != luaCallback)
+                    luaCallback.Call(go);
+            });
+        }
+        public void LoadAssetInstantiate(string assetFullPath,string assetName,LuaFunction luaCallback )
+        {
+            Load(assetName, obj =>
+            {
+                GameObject go = GameObject.Instantiate(obj) as GameObject;
+                if (null != luaCallback)
+                    luaCallback.Call(go);
+            });
+        }
+
+#else 
+        private IList<string> finishedList = new List<string>();
+        private void Update()
+        { 
+            InvokeWWWRequest();
+        }
+        private void InvokeWWWRequest()
+        { 
+            if (m_wwws.Keys.Count <= 0)
+                return;  
+            foreach (KeyValuePair<string, WWW> www in m_wwws)
+            {  
                 WWW download = www.Value;
                 if (null != download.error)
-                {
-                    Debug.Log(www.Key +" download error :"+download.error);
-                    m_errors.Add(www.Key,download.error);
-                    finishedList.Add(www.Key);
-                    continue;
-                }
-                if (download.isDone)
                 { 
-                    AssetBundle bundle = download.assetBundle;
-                    if (null == bundle)
-                    {
-                        m_errors.Add(www.Key, string.Format("{0} is not a valid asset bundle.", www.Key));
+                    m_errors.Add(www.Key, download.error);
+                    finishedList.Add(www.Key); 
+                }
+                else
+                {
+                    if (download.isDone)
+                    { 
+                        AssetBundle bundle = download.assetBundle;
+                        if (null == bundle)
+                        {
+                            m_errors.Add(www.Key, string.Format("{0} is not a valid asset bundle.", www.Key));
+                        }
+                        else
+                        {
+                            LoadedAsset loadedAsset = new LoadedAsset { assetbundle = bundle };
+                            Add2LoadedAssets(www.Key, loadedAsset);
+                        }
+                        finishedList.Add(www.Key);
                     }
-                    else
-                    {
-                        LoadedAsset loadedAsset = new LoadedAsset {assetbundle = bundle};
-                        Add2LoadedAssets(www.Key, loadedAsset);
-                    }
-                    finishedList.Add(www.Key);
-                } 
-            } 
+                }
+            }
             for (int i = 0; i < finishedList.Count; i++)
             {
                 m_wwws[finishedList[i]].Dispose();
+                m_wwws[finishedList[i]] = null;
                 m_wwws.Remove(finishedList[i]);
             }
-        }
+            finishedList.Clear();
+        } 
 
-        private void Add2LoadedAssets( string assetPath,LoadedAsset loadedAsset )
+        public static void LuaLoadAsset(string assetName, LuaFunction luaCallback)
+        { 
+            LuaLoadAsset(assetName + m_assetbundleExtension,assetName, luaCallback);
+        }
+        public static void LuaLoadAsset(string assetFullName, string assetName, LuaFunction luaCallback)
         {
-            var requestList = GetLoadRequest(assetPath);
-            for (int i = 0; i < requestList.Count; i++)
+            LoadAsset<UObject>(assetFullName, assetName, null, luaCallback);
+        } 
+        // todo 这两个方法不推荐使用
+        public static void LuaLoadAssetInstantiate( string assetName,LuaFunction luaCallback )
+        {
+            LuaLoadAssetInstantiate(assetName + m_assetbundleExtension, assetName, luaCallback);
+        }
+        public static void LuaLoadAssetInstantiate(string assetFullName, string assetName, LuaFunction luaCallback)
+        {
+            LoadAsset<UObject>(assetFullName, assetName, obj =>
             {
-                var request = requestList[i];
-                UObject asset = loadedAsset.assetbundle.LoadAssetAsync(request.assetName, request.assetType).asset;
-                if (null != request.callback)
-                    request.callback(asset);
-                if (null != request.luaCallback)
-                    request.luaCallback.luaCallback(asset);
-            }
-            m_loadedAssets.Add(assetPath,loadedAsset);
+                GameObject go = GameObject.Instantiate(obj) as GameObject;
+                if (null != luaCallback)
+                    luaCallback.Call(go);
+            }, luaCallback);
         }
 
-        private List<LoadRequest> GetLoadRequest( string assetPath )
+        public static void LoadAssetInstantiate<T>( string assetName,Action<GameObject> callback) where T : UObject
+        {
+            LoadAsset<T>(assetName, obj =>
+            {
+                GameObject go = GameObject.Instantiate(obj) as GameObject;
+                if (null != callback)
+                    callback(go);
+            });
+        }
+        public static void LoadAssetInstantiate<T>(string assetFullName, string assetName, Action<GameObject> callback) where T : UObject
+        {
+            LoadAsset<T>(assetFullName, assetName, obj =>
+            {
+                GameObject go = GameObject.Instantiate(obj) as GameObject; 
+                if (null != callback)
+                    callback(go);
+            });
+        }
+        public static void LoadAsset<T>(string assetName, Action<UObject> callback) where T : UObject 
+        {
+            LoadAsset<T>(assetName + m_assetbundleExtension, assetName, callback);
+        }
+        public static void LoadAsset<T>(string assetFullName, string assetName, Action<UObject> callback, LuaFunction luaCallback = null) where T : UObject 
+        { 
+            var loadedAsset = GetLoaded(assetFullName);
+            if (null != loadedAsset)
+            { 
+                UObject asset = loadedAsset.assetbundle.LoadAssetAsync(assetName, typeof(T)).asset;
+                if (null != callback)
+                    callback(asset);
+                if (null != luaCallback)
+                    luaCallback.Call(asset);
+            }
+            else
+            {
+                LoadRequest loadRequest = new LoadRequest();
+                loadRequest.assetbundleName = assetFullName;
+                loadRequest.assetType = typeof(T);
+                loadRequest.assetName = assetName; 
+                loadRequest.callback = callback;
+                loadRequest.luaCallback = luaCallback; 
+                m_loadRequests.Add(loadRequest); 
+                OnLoad<T>(assetFullName); 
+            }
+        }
+          
+        private static List<LoadRequest> GetLoadRequest(string assetPath)
         {
             List<LoadRequest> requests = new List<LoadRequest>();
             for (int i = 0; i < m_loadRequests.Count; i++)
@@ -132,52 +275,39 @@ namespace LuaMVC
                     requests.Add(m_loadRequests[i]);
             }
             return requests;
-        }
-
-        // todo 这个方法应该拆分为多个接口
-        public void LoadAsset<T>(string assetPath, string assetName, Action<UObject> callback, ILuaCallback luaCallback) where T : UObject
-        { 
-            var loadedAsset = GetLoaded(assetPath);
-            if (null != loadedAsset)
-            { 
-                UObject asset = loadedAsset.assetbundle.LoadAssetAsync(assetName, typeof(T)).asset;
-                if (null != callback)
-                    callback(asset);
-                if (null != luaCallback)
-                    luaCallback.luaCallback(asset);
-            }
-            else
-            {
-                LoadRequest loadRequest = new LoadRequest();
-                loadRequest.assetbundleName = assetPath;
-                loadRequest.assetType = typeof(T);
-                loadRequest.assetName = assetName;
-                loadRequest.callback = callback;
-                loadRequest.luaCallback = luaCallback; 
-                m_loadRequests.Add(loadRequest); 
-                OnLoad<T>(assetPath);
-            }
-        }
-
-        private void OnLoad<T>(string assetPath) where T : UObject
+        } 
+        private static void Add2LoadedAssets(string assetPath, LoadedAsset loadedAsset)
         {
-            if (m_wwws.ContainsKey(assetPath))
+            var requestList = GetLoadRequest(assetPath);
+            for (int i = 0; i < requestList.Count; i++)
+            {
+                var request = requestList[i];
+                UObject asset = loadedAsset.assetbundle.LoadAssetAsync(request.assetName, request.assetType).asset; 
+                if (null != request.callback)
+                    request.callback(asset);
+                if (null != request.luaCallback)
+                    request.luaCallback.Call(asset); 
+            }
+            m_loadedAssets.Add(assetPath, loadedAsset);
+        }
+        private static void OnLoad<T>(string assetName) where T : UObject
+        {
+            if (m_wwws.ContainsKey(assetName))
                 return;
-            string url = m_assetServerPath + assetPath;
+            string url = m_assetServerPath + assetName;
             WWW www = null;
             if (typeof(T) == typeof(AssetBundleManifest))
                 www = new WWW(url);
             else
             {
-                // todo 需要在此处进行版本区分 以及 unity版本区分
-                //www = WWW.LoadFromCacheOrDownload(url,0);
-                www = new WWW(url);
-            } 
-            m_wwws.Add(assetPath, www);
-            LoadDependencies(assetPath);
+                if (null == m_manifest)
+                    throw new Exception("Manifest file load failed.");
+                www = WWW.LoadFromCacheOrDownload(url, m_manifest.GetAssetBundleHash(assetName), 0);
+            }
+            m_wwws.Add(assetName, www);
+            LoadDependencies(assetName);
         }
-
-        private void LoadDependencies( string assetPath )
+        private static void LoadDependencies( string assetPath )
         {
             if( null == m_manifest)
                 return;
@@ -185,20 +315,19 @@ namespace LuaMVC
             if (null == dependencies || dependencies.Length <= 0)
                 return;
             m_dependencies.Add(assetPath, dependencies);
-            for (int i = 0; i < dependencies.Length; i++) 
-                OnLoad<UObject>(dependencies[i]);
-        }
-
-        private LoadedAsset GetLoaded( string assetPath )
-        {
+            for (int i = 0; i < dependencies.Length; i++)
+                OnLoad<UObject>(dependencies[i]); 
+        } 
+        private static LoadedAsset GetLoaded( string assetPath )
+        { 
             LoadedAsset loadedAsset = null;
-            m_loadedAssets.TryGetValue(assetPath, out loadedAsset);
+            m_loadedAssets.TryGetValue(assetPath, out loadedAsset); 
             if (null == loadedAsset)
                 return null; 
             string[] dependencies = null;
             m_dependencies.TryGetValue(assetPath, out dependencies);
             if (null == dependencies)
-                return null; 
+                return loadedAsset; 
             for (int i = 0; i < dependencies.Length; i++)
             {
                 LoadedAsset dependencyAsset = null;
@@ -206,39 +335,42 @@ namespace LuaMVC
                 if (null == dependencyAsset)
                     return null;
             }
-            loadedAsset.dependencyCount++;
+            loadedAsset.dependencyCount++; 
             return loadedAsset;
-        } 
-
-        public void LoadAudioClip(string audioName, Action<AudioClip> callback, params object[] objs)
-        {
-            if (m_audios.ContainsKey(audioName))
-            {
-                callback(m_audios[audioName]);
-                return;
-            }
-            // todo 先加载依赖项
-        }
-        public void LoadTextAsset(string textName, Action<TextAsset> callback, params object[] objs)
-        {
-
-        }
-        public void LoadTexture(string textureName, Action<Texture> callback, params object[] objs)
-        {
-
-        }
-        public void LoadAssetbundle(string assetName, Action<AssetBundle> callback, params object[] objs)
-        {
-
-        }
-
+        }  
+        // 释放已加载的全部资源
         public void OnDestroy()
         {
             foreach (KeyValuePair<string, LoadedAsset> asset in m_loadedAssets)
                 asset.Value.assetbundle.Unload(true);
+            foreach (KeyValuePair<string, WWW> pair in m_wwws)
+                pair.Value.Dispose();
         }
 
-        #region AutomaticUpdateAssetsFromAssetServer
+        /// <summary>
+        /// isThorough为true,卸载该 ab 包所有资源
+        /// </summary>
+        /// <param name="assetFullName"></param>
+        /// <param name="isThorough"></param>
+        /// <param name="uploadDependenices"></param>
+        public void Unload(string assetFullName, bool isThorough = false ,bool uploadDependenices = false)
+        {
+            if (m_loadedAssets.ContainsKey(assetFullName))
+                m_loadedAssets[assetFullName].assetbundle.Unload(isThorough); 
+            // 卸载依赖
+            if (uploadDependenices)
+            {
+                if (m_dependencies.ContainsKey(assetFullName))
+                {
+                    var assets = m_dependencies[assetFullName];
+                    for (int i = 0; i < assets.Length; i++)
+                        Unload(assetFullName, isThorough, uploadDependenices);
+                }
+            }
+        }
+
+        #region AutomaticUpdateAssetsFromAssetServer 启动自动更新，以后再优化解决
+
         public class MD5ListItem
         {
             public string assetname;
@@ -259,18 +391,17 @@ namespace LuaMVC
                 md5 = values[1].Trim();
             }
         }
-        private string localMD5ListPath;
-        public void AutomaticUpdateAssetsFromAssetServer()
+
+        public static IEnumerator AutomaticUpdateLuaScripts()
         {
             // 1.加载本地md5list
-            var localMD5List = GetMD5List(File.ReadAllLines(localMD5ListPath));
-            Coroutiner.Instance.StartCoroutine(LoadMD5ListFromServer(localMD5List));
+            var localMD5List = GetMD5List(File.ReadAllLines(m_localMD5ListPath));
+            yield return Coroutiner.Instance.StartCoroutine(LoadMD5ListFromServer(localMD5List));
         }
-        private IEnumerator LoadMD5ListFromServer(List<MD5ListItem> localMD5List)
+        private static IEnumerator LoadMD5ListFromServer(List<MD5ListItem> localMD5List)
         {
-            // 2.加载服务器md5list
-            string remoteMD5ListUrl = "http://192.168.1.113:8088/md5list.txt";
-            WWW www = new WWW(remoteMD5ListUrl);
+            // 2.加载服务器md5list 
+            WWW www = new WWW(m_serverLuaScriptCheckList);
             yield return null;
             if (www.error != null)
             {
@@ -283,23 +414,43 @@ namespace LuaMVC
                 // 3.对比得出更新项目
                 var updateList = CompareMD5(localMD5List, remoteMD5List);
                 // 4.调用线程进行更新
-                foreach (MD5ListItem item in updateList)
+                // todo 在这里可以对更新有个大致的统计
+                for (int i = 0; i < updateList.Count; i++)
                 {
-                    Debug.Log(item.assetname + "需要从服务器下载");
+                    var item = updateList[i]; 
+                    WWW downloadThread = new WWW(m_luaScirptPath + item.assetname);
+                    yield return downloadThread;
+                    if (downloadThread.error != null)
+                    {
+                        Debug.Log("更新lua脚本" + item.assetname + "出错" + downloadThread.error);
+                    }
+                    if (downloadThread.isDone)
+                        WriteLuaScript2LocalDirectory(downloadThread.text, m_localLuaScriptPath + item.assetname);
                 }
-                // todo 5.使用新的md5list覆盖本地MD5list
-                // File.WriteAllText(localMD5ListPath, www.text);
+                File.WriteAllText(m_localMD5ListPath, www.text);
             }
             www.Dispose();
         }
-        private List<MD5ListItem> GetMD5List(string[] fileContent)
+        private static void WriteLuaScript2LocalDirectory( string luaContent,string targetPath )
+        {
+            using (StreamWriter writer = new StreamWriter(targetPath))
+            {
+                writer.Write(luaContent);
+            }
+        }
+
+        private static List<MD5ListItem> GetMD5List(string[] fileContent)
         {
             List<MD5ListItem> result = new List<MD5ListItem>();
             for (int i = 0; i < fileContent.Length; i++)
+            {
+                if(string.IsNullOrEmpty(fileContent[i]))
+                    continue;
                 result.Add(new MD5ListItem(fileContent[i]));
+            }
             return result;
         }
-        private List<MD5ListItem> CompareMD5(List<MD5ListItem> localList, List<MD5ListItem> remoteList)
+        private static List<MD5ListItem> CompareMD5(List<MD5ListItem> localList, List<MD5ListItem> remoteList)
         {
             List<MD5ListItem> result = new List<MD5ListItem>();
             for (int i = 0; i < remoteList.Count; i++)
@@ -323,6 +474,8 @@ namespace LuaMVC
             }
             return result;
         }
+
         #endregion
+#endif
     }
 }

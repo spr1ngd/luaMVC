@@ -1,0 +1,11 @@
+
+-- 建议将事件的规范放在lua中
+
+NotificationType = {}
+this = NotificationType
+
+this.V2V_GAME_REGISTER = "Register"
+this.V2V_GAME_REGISTER_OK = "RegisterOK"
+this.V2S_PLAYER_REGISTER = "PlayerRegister"
+
+return NotificationType

@@ -25,6 +25,7 @@ namespace PureMVC.Patterns
 
         protected IProxy Proxy { get; set; }
 
+        // todo 这里需要考虑如果更改为其他服务器，我们也应该考虑将IP:Port的方式封装为pomeloClient这中简单的接口，供客户端直接调用。
         private static PomeloClient m_pomeloClient = null;
         protected static PomeloClient pomeloClient
         {
@@ -60,6 +61,7 @@ namespace PureMVC.Patterns
         {
 
         }
+
         public virtual void OnRegister()
         {
 

@@ -19,7 +19,9 @@ namespace Game
             switch (notification.Name)
             {
                 case NotificationType.SERVICE_CONNECTSERVER:
+                    // todo 只允许在这里赋值一次
                     pomeloClient = ((ServerAddressProxy) Proxy).PomeloClient;
+                    UnityEngine.Debug.Log("Connect server.");
                     pomeloClient.connect(null, data =>
                     {
                         pomeloClient.request("gate.gateHandler.queryEntry", new JsonObject(), OnQuery);
@@ -32,7 +34,7 @@ namespace Game
         }
 
         //todo  这里需要重新整理优化
-        void OnQuery(JsonObject result)
+        private void OnQuery(JsonObject result)
         {
             if (Convert.ToInt32(result["code"]) == 200)
             {

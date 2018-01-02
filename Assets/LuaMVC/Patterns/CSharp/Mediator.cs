@@ -1,10 +1,11 @@
 ﻿
+using System;
+using UnityEngine;
+
 namespace PureMVC.Patterns
 {
     using System.Collections.Generic;
-#if ENABLE_LUAMVC_VIEWMASTER
     using LuaMVC;
-#endif
 
     public interface IMediator
     {
@@ -14,9 +15,7 @@ namespace PureMVC.Patterns
         void OnRemove();
         string MediatorName { get; }
         object ViewComponent { get; set; }
-#if ENABLE_LUAMVC_VIEWMASTER
         IBaseView View { get; set; }
-#endif
     }
     
     public class Mediator : Notifier, IMediator
@@ -28,9 +27,7 @@ namespace PureMVC.Patterns
         }
         public const string NAME = "Mediator";
         public object ViewComponent { get; set; }
-#if ENABLE_LUAMVC_VIEWMASTER
         public IBaseView View { get; set; }
-#endif
 
         public Mediator() : this("Mediator", null)
         {
@@ -43,13 +40,16 @@ namespace PureMVC.Patterns
             this.m_mediatorName = (mediatorName != null) ? mediatorName : "Mediator";
             this.ViewComponent = viewComponent;
         }
-#if ENABLE_LUAMVC_VIEWMASTER
-        public Mediator( string mediatorName,IBaseView view )
+        public Mediator(string mediatorName, IBaseView view)
         {
             this.m_mediatorName = (mediatorName != null) ? mediatorName : "Mediator";
+            if (null == view)
+            {
+                throw new Exception(string.Format("The {0}'s view is null.", m_mediatorName));
+            }
             this.View = view;
+            this.View.Mediator = this;
         }
-#endif
 
         public virtual void HandleNotification(INotification notification)
         {

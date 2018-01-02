@@ -46,18 +46,23 @@ namespace LuaMVC
     public class Loom : MonoBehaviour
     {
         private static Loom m_instance = null;
-
         public static Loom Instance
         {
             get
             {
                 if (null == m_instance)
                 {
-                    GameObject Loom = new GameObject("Game");
+                    // if unity throw an error "xxxxx can only be called from the main thread." . Please init this tool from application start up. 
+                    GameObject Loom = new GameObject("Loom");
                     m_instance = Loom.AddComponent<Loom>();
                 }
                 return m_instance;
             }
+        }
+
+        public void Init()
+        {
+
         }
 
         private void Update()
@@ -164,7 +169,7 @@ namespace LuaMVC
             }
             catch (Exception e)
             {
-
+                throw e;
             }
             finally
             {
@@ -180,7 +185,7 @@ namespace LuaMVC
             }
             catch (Exception e)
             {
-
+                throw e;
             }
             finally
             {

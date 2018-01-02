@@ -12,7 +12,7 @@ namespace PureMVC.Patterns
     public class Notification : INotification
     {
         public object Body { get; set; }
-        public string Name { get; }
+        public string Name { get; set; }
         public string Type { get; set; }
 
         public Notification(string name) : this(name, null, null)

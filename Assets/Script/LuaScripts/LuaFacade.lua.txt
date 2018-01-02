@@ -1,0 +1,28 @@
+-- luaMVC 中lua程序的入口
+-- 此脚本命名固定且不可改，由框架中CSharp部分调用
+-- 公用的库在LuaFacade中进行引入
+
+require('NotificationType')
+ 
+function awake()
+	print('lua part framework start up.')
+	local canvas = CS.UnityEngine.GameObject.Find("Canvas/UICamera") 
+	local registerView
+	local loader = CS.LuaMVC.AssetLoader 
+    loader.LuaLoadAsset("Views.unity3d","Register",function(obj)
+		registerView = CS.UnityEngine.GameObject.Instantiate(obj)
+		registerView.name = 'Register'
+		registerView.transform:SetParent(canvas.transform)
+		registerView.transform.localScale = CS.UnityEngine.Vector3.one
+		registerView:AddComponent(typeof(CS.Game.LuaComponent)):Init("RegisterView") 
+	end)	
+	
+	-- 将中介者、命令、代理、服务器执行注入pureMVC
+	self:RegisterLuaCommand('PlayerCommand')
+	self:RegisterLuaMediator('RegisterMediator')
+end
+ 
+function ondestroy()
+	print('lua part framework shut down.')
+end
+ 

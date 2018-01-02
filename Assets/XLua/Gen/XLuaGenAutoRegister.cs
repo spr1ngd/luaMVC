@@ -25,6 +25,16 @@ namespace XLua.CSObjectWrap
 				
 				translator.DelayWrapLoader(typeof(Game.LuaApplicationFacade), GameLuaApplicationFacadeWrap.__Register);
 				
+				translator.DelayWrapLoader(typeof(LuaMVC.ILuaCallback), LuaMVCILuaCallbackWrap.__Register);
+				
+				translator.DelayWrapLoader(typeof(LuaMVC.LuaCallback), LuaMVCLuaCallbackWrap.__Register);
+				
+				translator.DelayWrapLoader(typeof(LuaMVC.LoadRequest), LuaMVCLoadRequestWrap.__Register);
+				
+				translator.DelayWrapLoader(typeof(LuaMVC.LoadedAsset), LuaMVCLoadedAssetWrap.__Register);
+				
+				translator.DelayWrapLoader(typeof(LuaMVC.AssetLoader), LuaMVCAssetLoaderWrap.__Register);
+				
 				translator.DelayWrapLoader(typeof(LuaBehaviour), LuaBehaviourWrap.__Register);
 				
 				translator.DelayWrapLoader(typeof(XLuaTest.Pedding), XLuaTestPeddingWrap.__Register);

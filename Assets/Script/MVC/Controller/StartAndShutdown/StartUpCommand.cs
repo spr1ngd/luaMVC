@@ -13,14 +13,18 @@ namespace Game
 			base.Execute (notification);
 		    ProgramEntry mainUI = notification.Body as ProgramEntry;
             if( !mainUI )
-                throw new Exception("mainUI is null ,please check it before running!"); 
+                throw new Exception("mainUI is null ,please check it before running!");
+            Facade.RegisterMediator(new LoadingMediator(mainUI.LoadingView));
             Facade.RegisterMediator(new LoginMediator(mainUI.LoginView));
-            Facade.RegisterMediator(new HUDMediator(mainUI.HUDView));
-			Facade.RegisterMediator(new ChessboardMediator(mainUI.ChessboardView));
-            Facade.RegisterMediator(new MessageMediator(mainUI.MessageView));
-		    Facade.RegisterMediator(new ReadyMediator(mainUI.ReadyView));
-            Facade.RegisterMediator(new AccountMediator(mainUI.AccountView));
-		    RegisterSetting();
+            Facade.RegisterMediator(new AdoptMediator(mainUI.AdoptView));
+            Facade.RegisterMediator(new PetHouseMediator(mainUI.PetHouseView));
+            Facade.RegisterMediator(new TurnaroundMediator(mainUI.TurnaroundView));
+            Facade.RegisterMediator(new PetStateMediator(mainUI.PetStateView));
+            Facade.RegisterMediator(new PetInteractionMediator(mainUI.PetInteraction)); 
+            Facade.RegisterMediator(new LoadingMediator(mainUI.LoadingView)); 
+
+            // todo 系统控制器目前还是手动构造注册。等待改进 有框架统一自动构造是比较合适的
+            RegisterSetting();
 		    RegisterAudioEntry();
             // proxy
             var playerProxy = new PlayerProxy();
@@ -29,15 +33,16 @@ namespace Game
 		    Facade.RegisterProxy(clientAddressProxy);
 
             // command
-		    Facade.RegisterCommand(NotificationType.COMMAND_ACCOUNT, new GameAccountCommand());
+		    // Facade.RegisterCommand(NotificationType.COMMAND_ACCOUNT, new GameAccountCommand());
 
             // server
-            Facade.RegisterHandler(new LoginHandler(playerProxy));
 		    Facade.RegisterHandler(new ClientStartHandler(clientAddressProxy));
+		    Facade.RegisterHandler(new LoginHandler(playerProxy));
             Facade.RegisterHandler(new ClientQuitHandler());
 
             // notice
-            SendNotification(NotificationType.SERVICE_CONNECTSERVER);// 启动游戏连接服务器
+		    // 启动游戏连接服务器
+            SendNotification(NotificationType.SERVICE_CONNECTSERVER);
         }
 
 	    private void RegisterSetting()

@@ -22,7 +22,7 @@ namespace Game
         public int idCard;
 
         // roles
-        public List<Role> roles = new List<Role>();
+		public List<Pet> pets = new List<Pet>();
 
         public Player(){}
         public Player(string name, string password)
@@ -39,7 +39,5 @@ namespace Game
             this.sex = sex;
             this.idCard = idCard;
         }
-
-        
     }
 }

@@ -1,7 +1,10 @@
 ManifestFileVersion: 0
-CRC: 4143486704
+CRC: 1923893607
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
-      Name: dogs
+      Name: dogs.unity3d
+      Dependencies: {}
+    Info_1:
+      Name: views.unity3d
       Dependencies: {}

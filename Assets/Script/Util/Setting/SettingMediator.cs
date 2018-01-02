@@ -27,7 +27,7 @@ namespace LuaMVC
 
         public override IList<string> ListNotificationInterests()
         {
-            IList<string> notifications = new BindingList<string>();
+            IList<string> notifications = new List<string>();
             notifications.Add(NotificationType.SETTING);
             return notifications;
         }

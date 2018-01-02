@@ -17,8 +17,7 @@ namespace Game
         public override void HandleNotification(INotification notification)
         {
             switch (notification.Name)
-            {
-                // 打开Audio设置面板
+            { 
                 case NotificationType.AUDIO:
                     View.Open();
                     break;

@@ -1,4 +1,6 @@
-dogs|975fd9f6989fa5254f346d2e41d129f
-dogs.manifest|4db4a6dfbbd61dd59da082f8d1fc5e
-StreamingAssets|8fbd3a1d1d2f5c46b3f5a5f33c1a
-StreamingAssets.manifest|6fc05ce4c4197672b9fddefdf225d
+LuaFacade.lua.txt|b8cb2b315496eb61245bbf1a9ba4435
+NotificationType.lua.txt|b247ee69bf6cc96fe10ae82b9d07c69
+PlayerCommand.lua.txt|48d7de1d4a7f141b21cb3cf981bd81b
+RegisterMediator.lua.txt|d99fc17835c8567e9efb4d582e3b1b6d
+RegisterView.lua.txt|b3e824e2b04f58eed23cba035c285e
+TestAutoUdpate.lua.txt|1aa8cdab25f408eabbc9b7b489caa8

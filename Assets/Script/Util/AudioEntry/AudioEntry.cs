@@ -10,10 +10,10 @@ namespace Game
     {
         private AudioRecord audioSetting = null;
         private bool drawAudioWindow = false;
-        public AudioClip clip = null;
+        public AudioSource source = null;
 
         public override void Initialize()
-        {
+        { 
             base.Initialize();
             this.ViewName = E_ViewType.AudioEntry;
             Read4PlayerPrefs();

@@ -18,9 +18,12 @@ namespace Game
         private LuaTable scriptEnv = null;
         private Action ondestroy = null;
 
-        public void StartUp()
+        public LuaApplicationFacade()
         {
-            Debug.Log("lua PureMVC framework start up...");
+            StartUp();
+        }
+        public void StartUp()
+        { 
             luaEnv.AddLoader(Loader);
             luaEnv.AddLoader(LuaPathLoader);
             this.scriptEnv = luaEnv.NewTable();
@@ -29,7 +32,7 @@ namespace Game
             scriptEnv.SetMetaTable(meta);
             meta.Dispose();
             scriptEnv.Set("self", this);
-            luaEnv.DoString(LoadLua("LuaFacade"), "LuaFacade", scriptEnv);
+            luaEnv.DoString(LoadLua("LuaFacade"), "LuaFacade", scriptEnv); 
             Action awake = scriptEnv.Get<Action>("awake");
             ondestroy = scriptEnv.Get<Action>("ondestroy");
             if (null != awake)
@@ -37,7 +40,6 @@ namespace Game
         }
         public void ShutDown()
         {
-            Debug.Log("lua PureMVC framework start up...");
             if (null != ondestroy)
                 ondestroy();
             scriptEnv.Dispose();
@@ -45,26 +47,26 @@ namespace Game
 
         private string LoadLua(string filePath)
         {
-            string fullPath = Application.dataPath + "/Script/Resources/" + filePath + ".lua.txt";
+            string fullPath = Application.dataPath + "/Script/LuaScripts/" + filePath + ".lua.txt";
             return File.ReadAllText(fullPath);
         }
+
         private byte[] Loader(ref string filePath)
         {
-            string fullPath = Application.dataPath + "/Script/Resources/" + filePath + ".lua.txt";
+            string fullPath = Application.dataPath + "/Script/LuaScripts/" + filePath + ".lua.txt";
             return Encoding.UTF8.GetBytes(File.ReadAllText(fullPath));
         }
         private byte[] LuaPathLoader( ref string filePath )
-        {
-            // todo 这里估计是要改为loadAB包
-            string fullPath = Application.streamingAssetsPath + "/Lua/" + filePath;
+        { 
+            string fullPath = Application.streamingAssetsPath + "/Lua/" + filePath + ".lua.txt";
             return Encoding.UTF8.GetBytes(File.ReadAllText(fullPath));
-        }
+        } 
 
         #region Lua table map to CSharp class 
 
         public void RegisterLuaMediator(string mediatorName)
         {
-            luaEnv.DoString("require '" + mediatorName + "'");
+            luaEnv.DoString("require '" + mediatorName + "'"); 
             ILuaMediator mediator = new LuaMediator();
             mediator.NAME = luaEnv.Global.GetInPath<string>(mediatorName + ".NAME");
             mediator.ListNotificationInterests = luaEnv.Global.GetInPath<List<string>>(mediatorName + ".ListNotificationInterests");

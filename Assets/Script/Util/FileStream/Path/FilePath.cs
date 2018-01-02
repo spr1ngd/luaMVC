@@ -18,6 +18,7 @@ namespace Game
 #elif UNITY_IPHONE
                 return Application.dataPath + "/Raw/";
 #endif
+                return "";
             }
         }
 
@@ -33,7 +34,8 @@ namespace Game
                 return "jar:file://" + Application.dataPath + "!/assets/";
 #elif UNITY_IPHONE
                 return Application.dataPath + "/Raw/";
-#endif
+#endif 
+                return "";
             }
         }
 

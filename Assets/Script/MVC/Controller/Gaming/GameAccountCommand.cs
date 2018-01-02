@@ -12,8 +12,8 @@ namespace Game
             if( null == player )
                 throw new Exception("Get role data failed,please reconnect server!");
             int highScore = int.Parse(notification.Body as string);
-            player.UpdateRoleHighScore(highScore);
-            SendNotification(NotificationType.V2V_GAME_ACCOUNT, new ScoreEvent(highScore, player.HighScoreRecord));
+            
+            //SendNotification(NotificationType.V2V_GAME_ACCOUNT, new ScoreEvent(highScore, player.HighScoreRecord));
         }
     }
 }

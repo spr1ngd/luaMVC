@@ -1,29 +1,27 @@
-﻿
+﻿ 
 using LuaMVC;
 using UnityEngine;
-using XLua;
+using System.Collections; 
 
 public class AssetLoaderTest : MonoBehaviour
-{
-    LuaEnv luaEnv = new LuaEnv();
+{ 
     private void Start()
-    {
-        AssetLoader loader = this.GetComponent<AssetLoader>();
-        loader.LoadAsset<Object>("dogs", "cu_puppy_corgi", (dog) =>
-        {
-            GameObject.Instantiate(dog);
-        }, null);
-        // cu_puppy_husky_lit
-        loader.LoadAsset<Object>("dogs", "cu_puppy_husky_lit", (dog) =>
-        {
-            var dogGameObject = GameObject.Instantiate(dog) as GameObject;
-            dogGameObject.transform.localPosition += new Vector3(0.3f, 0, 0);
-        }, null);
-        luaEnv.DoString("print('hello world')");
+    { 
+        StartCoroutine(init()); 
     }
 
-    private void OnDestroy()
+    private IEnumerator init()
     {
-        luaEnv.Dispose();
-    }
-}
+        // todo 这些应该归入到框架内部 不暴露到普通逻辑中
+        yield return AssetLoader.OnInitialize(); 
+        
+        yield return null;
+
+        AssetLoader.LoadAssetInstantiate<Object>("dogs.unity3d", "dog1", (dog) =>
+        {
+            GameObject go = (GameObject)dog;
+            go.name = "dog1";
+            go.transform.localScale = Vector3.one;
+        }); 
+    } 
+} 

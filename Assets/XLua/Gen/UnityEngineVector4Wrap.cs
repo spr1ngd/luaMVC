@@ -55,7 +55,7 @@ namespace XLua.CSObjectWrap
 			Utils.EndObjectRegister(type, L, translator, __CSIndexer, __NewIndexer,
 			    null, null, null);
 
-		    Utils.BeginClassRegister(type, L, __CreateInstance, 14, 2, 0);
+		    Utils.BeginClassRegister(type, L, __CreateInstance, 14, 4, 0);
 			Utils.RegisterFunc(L, Utils.CLS_IDX, "Lerp", _m_Lerp_xlua_st_);
             Utils.RegisterFunc(L, Utils.CLS_IDX, "LerpUnclamped", _m_LerpUnclamped_xlua_st_);
             Utils.RegisterFunc(L, Utils.CLS_IDX, "MoveTowards", _m_MoveTowards_xlua_st_);
@@ -74,6 +74,8 @@ namespace XLua.CSObjectWrap
             
 			Utils.RegisterFunc(L, Utils.CLS_GETTER_IDX, "zero", _g_get_zero);
             Utils.RegisterFunc(L, Utils.CLS_GETTER_IDX, "one", _g_get_one);
+            Utils.RegisterFunc(L, Utils.CLS_GETTER_IDX, "positiveInfinity", _g_get_positiveInfinity);
+            Utils.RegisterFunc(L, Utils.CLS_GETTER_IDX, "negativeInfinity", _g_get_negativeInfinity);
             
 			
 			
@@ -361,12 +363,12 @@ namespace XLua.CSObjectWrap
             
                 
                 {
-                    float new_x = (float)LuaAPI.lua_tonumber(L, 2);
-                    float new_y = (float)LuaAPI.lua_tonumber(L, 3);
-                    float new_z = (float)LuaAPI.lua_tonumber(L, 4);
-                    float new_w = (float)LuaAPI.lua_tonumber(L, 5);
+                    float newX = (float)LuaAPI.lua_tonumber(L, 2);
+                    float newY = (float)LuaAPI.lua_tonumber(L, 3);
+                    float newZ = (float)LuaAPI.lua_tonumber(L, 4);
+                    float newW = (float)LuaAPI.lua_tonumber(L, 5);
                     
-                    __cl_gen_to_be_invoked.Set( new_x, new_y, new_z, new_w );
+                    __cl_gen_to_be_invoked.Set( newX, newY, newZ, newW );
                     
                     
                         translator.UpdateUnityEngineVector4(L, 1, __cl_gen_to_be_invoked);
@@ -977,6 +979,30 @@ namespace XLua.CSObjectWrap
 		    try {
                 ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
 			    translator.PushUnityEngineVector4(L, UnityEngine.Vector4.one);
+            } catch(System.Exception __gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + __gen_e);
+            }
+            return 1;
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _g_get_positiveInfinity(RealStatePtr L)
+        {
+		    try {
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+			    translator.PushUnityEngineVector4(L, UnityEngine.Vector4.positiveInfinity);
+            } catch(System.Exception __gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + __gen_e);
+            }
+            return 1;
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _g_get_negativeInfinity(RealStatePtr L)
+        {
+		    try {
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+			    translator.PushUnityEngineVector4(L, UnityEngine.Vector4.negativeInfinity);
             } catch(System.Exception __gen_e) {
                 return LuaAPI.luaL_error(L, "c# exception:" + __gen_e);
             }

@@ -21,7 +21,7 @@ namespace XLua.CSObjectWrap
         {
 			ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
 			System.Type type = typeof(UnityEngine.Renderer);
-			Utils.BeginObjectRegister(type, L, translator, 0, 3, 24, 19);
+			Utils.BeginObjectRegister(type, L, translator, 0, 3, 25, 20);
 			
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "SetPropertyBlock", _m_SetPropertyBlock);
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "GetPropertyBlock", _m_GetPropertyBlock);
@@ -50,6 +50,7 @@ namespace XLua.CSObjectWrap
             Utils.RegisterFunc(L, Utils.GETTER_IDX, "probeAnchor", _g_get_probeAnchor);
             Utils.RegisterFunc(L, Utils.GETTER_IDX, "reflectionProbeUsage", _g_get_reflectionProbeUsage);
             Utils.RegisterFunc(L, Utils.GETTER_IDX, "sortingLayerName", _g_get_sortingLayerName);
+            Utils.RegisterFunc(L, Utils.GETTER_IDX, "allowOcclusionWhenDynamic", _g_get_allowOcclusionWhenDynamic);
             Utils.RegisterFunc(L, Utils.GETTER_IDX, "sortingLayerID", _g_get_sortingLayerID);
             Utils.RegisterFunc(L, Utils.GETTER_IDX, "sortingOrder", _g_get_sortingOrder);
             
@@ -70,6 +71,7 @@ namespace XLua.CSObjectWrap
             Utils.RegisterFunc(L, Utils.SETTER_IDX, "probeAnchor", _s_set_probeAnchor);
             Utils.RegisterFunc(L, Utils.SETTER_IDX, "reflectionProbeUsage", _s_set_reflectionProbeUsage);
             Utils.RegisterFunc(L, Utils.SETTER_IDX, "sortingLayerName", _s_set_sortingLayerName);
+            Utils.RegisterFunc(L, Utils.SETTER_IDX, "allowOcclusionWhenDynamic", _s_set_allowOcclusionWhenDynamic);
             Utils.RegisterFunc(L, Utils.SETTER_IDX, "sortingLayerID", _s_set_sortingLayerID);
             Utils.RegisterFunc(L, Utils.SETTER_IDX, "sortingOrder", _s_set_sortingOrder);
             
@@ -513,6 +515,20 @@ namespace XLua.CSObjectWrap
         }
         
         [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _g_get_allowOcclusionWhenDynamic(RealStatePtr L)
+        {
+		    try {
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+			
+                UnityEngine.Renderer __cl_gen_to_be_invoked = (UnityEngine.Renderer)translator.FastGetCSObj(L, 1);
+                LuaAPI.lua_pushboolean(L, __cl_gen_to_be_invoked.allowOcclusionWhenDynamic);
+            } catch(System.Exception __gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + __gen_e);
+            }
+            return 1;
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
         static int _g_get_sortingLayerID(RealStatePtr L)
         {
 		    try {
@@ -796,6 +812,21 @@ namespace XLua.CSObjectWrap
 			
                 UnityEngine.Renderer __cl_gen_to_be_invoked = (UnityEngine.Renderer)translator.FastGetCSObj(L, 1);
                 __cl_gen_to_be_invoked.sortingLayerName = LuaAPI.lua_tostring(L, 2);
+            
+            } catch(System.Exception __gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + __gen_e);
+            }
+            return 0;
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _s_set_allowOcclusionWhenDynamic(RealStatePtr L)
+        {
+		    try {
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+			
+                UnityEngine.Renderer __cl_gen_to_be_invoked = (UnityEngine.Renderer)translator.FastGetCSObj(L, 1);
+                __cl_gen_to_be_invoked.allowOcclusionWhenDynamic = LuaAPI.lua_toboolean(L, 2);
             
             } catch(System.Exception __gen_e) {
                 return LuaAPI.luaL_error(L, "c# exception:" + __gen_e);

@@ -1,5 +1,4 @@
-
-using LuaMVC;
+ 
 using PureMVC.Patterns;
 using UnityEngine;
 
@@ -7,7 +6,12 @@ namespace Game
 {
 	public class ApplicationFacade : Facade
     {
-		public void StartUp( ProgramEntry mainUI )
+        public ApplicationFacade()
+        {
+
+        }
+
+        public void StartUp( ProgramEntry mainUI )
 		{
             Debug.Log("PureMVC framework start up...");
 			SendNotification (NotificationType.START,mainUI);

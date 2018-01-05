@@ -1,6 +1,0 @@
-LuaFacade.lua.txt|b8cb2b315496eb61245bbf1a9ba4435
-NotificationType.lua.txt|b247ee69bf6cc96fe10ae82b9d07c69
-PlayerCommand.lua.txt|48d7de1d4a7f141b21cb3cf981bd81b
-RegisterMediator.lua.txt|d99fc17835c8567e9efb4d582e3b1b6d
-RegisterView.lua.txt|b3e824e2b04f58eed23cba035c285e
-TestAutoUdpate.lua.txt|1aa8cdab25f408eabbc9b7b489caa8

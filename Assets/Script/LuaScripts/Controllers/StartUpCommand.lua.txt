@@ -1,0 +1,11 @@
+
+-- 项目系统启动命令 startup
+
+StartUpCommand = {}
+this = StartUpCommand
+
+StartUpCommand.NAME = NotificationType.STARTUP
+
+StartUpCommand.Execute = function(notification)
+	print('lua start up')
+end

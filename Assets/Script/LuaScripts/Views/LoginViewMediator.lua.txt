@@ -1,0 +1,26 @@
+
+-- LoginView 的中介者
+local loginView = require('LoginView')
+
+LoginViewMediator = {}
+this = LoginViewMediator
+
+LoginViewMediator.NAME = "LoginViewMediator"
+
+LoginViewMediator.OnRegister = function()
+	loginView.Close()
+end
+
+LoginViewMediator.OnRemove = function()
+
+end
+
+LoginViewMediator.ListNotificationInterests = {NotificationType.V2S_LOGIN}
+
+LoginViewMediator.HandleNotification = function(notification)
+	local name = notification.Name
+	local body = notification.Body
+	if name == NotificationType.V2S_LOGIN then
+		loginView.Close()
+	end 
+end

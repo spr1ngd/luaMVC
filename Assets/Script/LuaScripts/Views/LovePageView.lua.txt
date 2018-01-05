@@ -1,0 +1,23 @@
+
+-- 收藏栏View
+
+LovePageView = {} 
+ 
+local transform
+local productsContent
+LovePageView.ViewName = ViewNames.LovePage
+
+LovePageView.awake = function() 
+	transform = LovePageView.self.transform
+	productsContent = transform:Find("Panel/LoveProducts/Viewport/Content")
+end
+
+LovePageView.Open = function()
+	LovePageView.panel:SetActive(true)
+end
+
+LovePageView.Close = function()
+	LovePageView.panel:SetActive(false)
+end
+
+return LovePageView

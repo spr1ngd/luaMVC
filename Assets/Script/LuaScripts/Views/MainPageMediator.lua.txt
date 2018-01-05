@@ -1,0 +1,36 @@
+
+-- Main page mediator.
+local MainPageView = require('MainPageView')
+
+MainPageMediator = {}
+this = MainPageMediator
+
+MainPageMediator.NAME = "ManiPageMediator"
+
+MainPageMediator.OnRegister = function()
+
+end
+
+MainPageMediator.OnRemove = function()
+
+end
+
+MainPageMediator.ListNotificationInterests = 
+{
+	NotificationType.S2V_PRODUCTRESULT, -- 接受主页面信息和检索的信息
+	NotificationType.V2V_OPENMAINPAGE, -- 打开主页
+}
+
+MainPageMediator.HandleNotification = function(notification)
+	local name = notification.Name
+	local body = notification.Body
+
+	if name == NotificationType.S2V_PRODUCTRESULT then
+		MainPageView.CreateProductItems(body)
+	elseif name == NotificationType.V2V_OPENMAINPAGE then
+		MainPageView.Open()
+		-- todo 这里需要关闭其他的面板，是利用command来实现呢，还是利用viewmaster来实现，这个明天再考虑吧
+	end
+end
+
+return MainPageMediator

@@ -1,0 +1,30 @@
+
+-- LovePageView Mediator
+
+local LovePageView = require('LovePageView')
+
+LovePageMediator = {}
+this = LovePageMediator
+
+LovePageMediator.NAME = "LovePageMediator"
+
+LovePageMediator.OnRegister = function()
+	LovePageView.Close()
+end
+
+LovePageMediator.OnRemove = function()
+	
+end
+
+LovePageMediator.ListNotificationInterests = {NotificationType.S2V_LOVEPRODUCTRESULT}
+
+LovePageMediator.HandleNotification = function(notification)
+	local name = notification.Name
+	local body = notification.Body
+
+	if name == NotificationType.S2V_LOVEPRODUCTRESULT then
+
+	end
+end
+
+return LovePageMediator

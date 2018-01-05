@@ -1,0 +1,43 @@
+
+-- 主页 view
+
+MainPageView = {} 
+
+local luaFacade = CS.LuaMVC.LuaApplicationFacade
+  
+ local transform
+local productsParent
+MainPageView.ViewName = ViewNames.MainPage
+
+local searchInputField 
+local products = {} -- 记录已经生成的产品标签 todo 这里推荐使用luaMVC中的ObjectPool
+
+MainPageView.awake = function() 
+	transform = MainPageView.self.transform
+	productsParent = MainPageView.panel.transform:Find("Products") 
+	local searchPanel = MainPageView.panel.transform:Find("SearchModule")
+	searchInputField = searchPanel:Find("SearchInputField"):GetComponent("InputField")
+	searchPanel:Find("SearchButton"):GetComponent("Button").onClick:AddListener(function()
+		print("搜索 :" .. searchInputField.text)
+	luaFacade.SendNotification(NotificationType.V2S_GETPRODUCT)
+	end)
+	searchPanel:Find("SearchClearButton"):GetComponent("Button").onClick:AddListener(function()
+		searchInputField.text = ''
+		print("清空当前搜索内容")
+	luaFacade.SendNotification(NotificationType.V2V_CLEARSEARCHRESULT)
+	end)
+end
+
+MainPageView.CreateProductItems = function(productInfos)
+	print("生成新的搜索产品标签，可退回显示推荐的标签")
+end
+
+MainPageView.Open = function()
+	MainPageView.panel:SetActive(true)
+end
+
+MainPageView.Close = function()
+	MainPageView.panel:SetActive(false)
+end
+
+return MainPageView

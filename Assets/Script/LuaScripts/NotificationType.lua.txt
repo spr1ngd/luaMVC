@@ -1,0 +1,30 @@
+
+-- 建议将事件的规范放在lua中
+
+NotificationType = {}
+this = NotificationType
+
+this.STARTUP = "Start Up"
+this.V2S_LOGIN = "Login"  -- 将登陆信息提交服务器 只提供手机号登陆的接口，方便管理和使用
+
+-- 关于View的操作
+this.V2V_OPENMAINPAGE = "Open Main Page"
+this.V2V_OPENPRODUCTPAGE = "Open Product Page"
+this.V2V_OPENLOVEPAGE= "Open Love Page"
+this.V2V_OPENUSERPAGE = "Open User Page"
+
+-- 关于搜索产品的操作
+
+this.V2S_GETPRODUCT= "Get Search Product"
+this.V2V_CLEARSEARCHRESULT = "Clear Search Result"
+this.S2V_PRODUCTRESULT = "Search Result"
+
+-- 关于用户页的操作
+this.V2S_GETUSERPRODUCT = "Get User Product"
+this.S2V_USERPRODUCTRESULT = "User Product Result"
+
+-- 关于收藏页的操作
+this.V2S_GETLOVEPRODUCT = "Get Love Product"
+this.S2V_LOVEPRODUCTRESULT = "Love Product Result"
+
+return NotificationType

@@ -1,0 +1,65 @@
+ 
+-- LuaMVC中 lua部分的启动脚本
+
+require('NotificationType') 
+require('ViewNames')
+
+UnityEngine = CS.UnityEngine
+GameObject = CS.UnityEngine.GameObject
+LuaMVC = CS.LuaMVC.LuaApplicationFacade -- 用于给luaMVC发送通知
+AssetLoader = CS.LuaMVC.AssetLoader  -- 用于加载Resources/Assetbundle资源
+ 
+function awake()
+	print('lua part framework start up.')
+	self:RegisterLuaCommand("StartUpCommand") 
+
+	local canvasParent = GameObject.Find("Canvas/UICamera").transform
+
+	-- 1.加载游戏资源到游戏场景中 加载资源，并为view挂载对应的脚本
+	-- 1.1 加载登陆界面 
+	AssetLoader.LuaLoadAsset("Views.unity3d","LoginView",function(asset)
+		local loginView = GameObject.Instantiate(asset)
+		loginView.transform:SetParent(canvasParent)
+		loginView.transform.localScale = UnityEngine.Vector3.one
+		loginView:AddComponent(typeof(CS.LuaMVC.LuaMonobehaviour)):Init('LoginView') 
+		self:RegisterLuaMediator('LoginViewMediator')
+	end) 
+	-- 1.2 加载主页面
+	AssetLoader.LuaLoadAsset("Views.unity3d","MainPage",function(asset)
+		local mainPage = GameObject.Instantiate(asset)
+		mainPage.transform:SetParent(canvasParent)
+		mainPage.transform.localScale = UnityEngine.Vector3.one
+		mainPage:AddComponent(typeof(CS.LuaMVC.LuaMonobehaviour)):Init('MainPageView') 
+		self:RegisterLuaMediator('MainPageMediator')
+	end)
+	-- 1.3 加载用户页面
+	AssetLoader.LuaLoadAsset("Views.unity3d","UserPage",function(asset)
+		local userPage = GameObject.Instantiate(asset)
+		userPage.transform:SetParent(canvasParent)
+		userPage.transform.localScale = UnityEngine.Vector3.one
+		userPage:AddComponent(typeof(CS.LuaMVC.LuaMonobehaviour)):Init('UserPageView') 
+		self:RegisterLuaMediator('UserPageMediator')
+	end)
+	-- 1.4 收藏页面
+	AssetLoader.LuaLoadAsset("Views.unity3d","LovePage",function(asset)
+		local lovePage = GameObject.Instantiate(asset)
+		lovePage.transform:SetParent(canvasParent)
+		lovePage.transform.localScale = UnityEngine.Vector3.one
+		lovePage:AddComponent(typeof(CS.LuaMVC.LuaMonobehaviour)):Init('LovePageView') 
+		self:RegisterLuaMediator('LovePageMediator')
+	end)
+	-- 1.5 功能菜单
+	AssetLoader.LuaLoadAsset("Views.unity3d","FunctionBar",function(asset)
+		local functoinBar = GameObject.Instantiate(asset)
+		functoinBar.transform:SetParent(canvasParent)
+		functoinBar.transform.localScale = UnityEngine.Vector3.one
+		functoinBar:AddComponent(typeof(CS.LuaMVC.LuaMonobehaviour)):Init('FunctionBarView') 
+		self:RegisterLuaMediator('FunctionBarMediator')
+	end)
+
+	LuaMVC.SendNotification(NotificationType.STARTUP)
+end
+ 
+function ondestroy()
+	print('lua part framework shut down.')
+end 

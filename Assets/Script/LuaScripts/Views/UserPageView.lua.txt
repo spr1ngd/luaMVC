@@ -1,0 +1,31 @@
+
+-- 用户界面，非登陆状态无法进入此页面，登陆之后可查看到自己的产品界面
+
+UserPageView = {} 
+
+UserPageView.ViewName = ViewNames.UserPage
+local transform 
+local productsParent
+local editorPage
+
+UserPageView.awake = function()
+	transform = UserPageView.self.transform
+	productsParent = UserPageView.panel.transform:Find("Products")
+	editorPage = UserPageView.panel.transform:Find("EditorPage")
+	editorPage.gameObject:AddComponent(typeof(CS.LuaMVC.LuaMonobehaviour)):Init("UserProductEditorPageView")
+end
+
+UserPageView.CreateProductItem = function(notification)
+
+end
+
+
+UserPageView.Open = function()
+	UserPageView.panel:SetActive(true)
+end
+
+UserPageView.Close = function() 
+	UserPageView.panel:SetActive(false)
+end
+
+return UserPageView

@@ -1,0 +1,30 @@
+
+-- 项目登陆
+
+LoginView = {} 
+
+LoginView.ViewName = ViewNames.LoginView
+local transform
+  
+LoginView.awake = function()  
+	transform = LoginView.self.transform
+	LoginView.Username = transform:Find("Panel/Username"):GetComponent("InputField")
+	LoginView.Password = transform:Find("Panel/Password"):GetComponent("Password")
+
+	transform:Find("Panel/PasswordButton"):GetComponent("Button").onClick:AddListener(function()
+		print("获取手机验证码，请稍后，这里需要接入ShareSDK iOS，以提供此功能。")
+	end)
+	transform:Find("Panel/LoginButton"):GetComponent("Button").onClick:AddListener(function()
+		print("登陆手机号 " .. LoginView.Username.text)
+	end)
+end
+
+LoginView.Open = function()
+	LoginView.panel:SetActive(true)
+end
+
+LoginView.Close = function()
+	LoginView.panel:SetActive(false)
+end
+
+return LoginView

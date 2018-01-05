@@ -1,0 +1,38 @@
+
+-- 项目下方的菜单栏 主页|产品|收藏|用户
+
+FunctionBarView = {} 
+local luaFacade = CS.LuaMVC.LuaApplicationFacade
+local viewMaster = CS.LuaMVC.ViewMaster
+ 
+FunctionBarView.ViewName = ViewNames.FunctionBarView
+
+FunctionBarView.awake = function()  
+
+	FunctionBarView.panel.transform:Find("MainPage"):GetComponent("Button").onClick:AddListener(function()
+		viewMaster.OpenView("MainPage",true)
+		--luaFacade.SendNotification(NotificationType.V2V_OPENMAINPAGE)
+	end)
+	FunctionBarView.panel.transform:Find("ProductPage"):GetComponent("Button").onClick:AddListener(function()
+		viewMaster.OpenView("ProductPage",true)
+		--luaFacade.SendNotification(NotificationType.V2V_OPENPRODUCTPAGE)
+	end)
+	FunctionBarView.panel.transform:Find("UserPage"):GetComponent("Button").onClick:AddListener(function()
+		viewMaster.OpenView("UserPage",true)
+		--luaFacade.SendNotification(NotificationType.V2V_OPENLOVEPAGE)
+	end)
+	FunctionBarView.panel.transform:Find("LovePage"):GetComponent("Button").onClick:AddListener(function()
+		viewMaster.OpenView("LovePage",true)
+		--luaFacade.SendNotification(NotificationType.V2V_OPENUSERPAGE)
+	end)
+end
+
+FunctionBarView.Open = function()
+	FunctionBarView.panel:SetActive(true)
+end
+
+FunctionBarView.Close = function()
+	FunctionBarView.panel:SetActive(false)
+end
+
+return FunctionBarView

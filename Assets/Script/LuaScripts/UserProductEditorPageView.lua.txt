@@ -1,0 +1,48 @@
+
+-- 用户产品编辑界面
+
+UserProductEditorPageView = {}
+
+local transform
+local newIcon
+local newName
+local newDescription
+
+UserProductEditorPageView.awake = function()
+	transform = UserProductEditorPageView.self.transform
+	local panel = UserProductEditorPageView.panel.transform
+
+	-- 需要修改的产品信息
+	panel:Find("OldProductInfo/ProductImage"):GetComponent("Image")
+	panel:Find("OldProductInfo/ProductName"):GetComponent("Text")
+	panel:Find("OldProductInfo/ProductId"):GetComponent("Text")
+	panel:Find("OldProductInfo/ProductDescription"):GetComponent("Text")
+
+	-- 加载图片本地相册的按钮
+	panel:Find("LoadProductImage"):GetComponent("Button").onClick:AddListener(function()
+		print('加载本地相册图片')
+	end)
+	panel:Find("ProductImage"):GetComponent("Image")
+	panel:Find("ProductName"):GetComponent("InputField")
+	panel:Find("ProductDescription"):GetComponent("InputField")
+	panel:Find("SureButton"):GetComponent("Button").onClick:AddListener(function()
+		print("确定修改，数据提交服务器，刷新产品页面，并关闭当前窗口")
+	end)
+	panel:Find("CancelButton"):GetComponent("Button").onClick:AddListener(function()
+		print("取消修改，并关闭当前窗口")
+	end)
+end
+
+UserProductEditorPageView.Initialize = function() --此方法会被awake自动调用
+
+end
+
+function UserProductEditorPageView.Open()
+	UserProductEditorPageView.panel:SetActive(true)
+end
+
+function UserProductEditorPageView.Close()
+	UserProductEditorPageView.panel:SetActive(false)
+end
+
+return UserProductEditorPageView

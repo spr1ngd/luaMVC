@@ -1,0 +1,15 @@
+
+-- 界面名称定义
+
+ViewNames = {}
+this = ViewNames
+
+ViewNames.LoginView = "LoginView"
+ViewNames.FunctionBarView = "FunctionBarView"
+
+ViewNames.MainPage = "MainPage"
+ViewNames.ProductPage = "ProductPage"
+ViewNames.UserPage = "UserPage"
+ViewNames.LovePage = "LovePage"
+
+return ViewNames

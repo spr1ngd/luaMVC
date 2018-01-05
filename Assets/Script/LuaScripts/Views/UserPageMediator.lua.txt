@@ -1,0 +1,28 @@
+
+-- User page view's mediator
+
+local UserPageView = require("UserPageView")
+
+UserPageMediator = {}
+this = UserPageMediator
+
+UserPageMediator.NAME = "UserPageMediator"
+
+UserPageMediator.OnRegister = function()
+	UserPageView.Close()
+end
+
+UserPageMediator.OnRemove = function()
+
+end
+
+UserPageMediator.ListNotificationInterests = {NotificationType.S2V_USERPRODUCTRESULT}
+
+UserPageMediator.HandleNotification = function(notification)
+	local name = notification.Name
+	local body = notification.Body
+
+	if name == NotificationType.S2V_USERPRODUCTRESULT then
+
+	end
+end

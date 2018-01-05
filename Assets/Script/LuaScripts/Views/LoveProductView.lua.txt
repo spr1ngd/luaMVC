@@ -1,0 +1,32 @@
+
+-- 收藏产品对象所挂载的类型
+
+LoveProductView = {}
+this = LoveProductView
+ 
+local transform
+local panel 
+
+LoveProductView.awake = function()
+	transform = LoveProductView.self.transform
+	panel = transform:Find("Product")
+
+	panel:Find("ProductName"):GetComponent("Text").text = "ProductName"
+	panel:Find("ProductId"):GetComponent("Text").text = "ProductId 18223"
+	panel:Find("ProductDescription"):GetComponent("Text").text = "Product Description"
+
+	-- 在这里给image赋值
+	local icon = panel:Find("ProductImage"):GetComponent("Image")
+	local largeImage = panel:Find("ProductLargeImage"):GetComponent("Image")
+
+	panel:Find("ARButton"):GetComponent("Button").onClick:AddListener(function()
+		print('打开'..panel:Find("ProductId"):GetComponent("Text").text .. "的AR模型")
+
+	end)
+	panel:Find("ThreeDButton"):GetComponent("Button").onClick:AddListener(function()
+		print('打开'..panel:Find("ProductId"):GetComponent("Text").text .. "的3D模型")
+
+	end)
+end
+
+return LoveProductView

@@ -1,0 +1,18 @@
+
+-- FunctionBar View Mediator
+
+local FunctionBarView = require('FunctionBarView') 
+
+FunctionBarMediator = {}
+this = FunctionBarMediator
+
+FunctionBarMediator.NAME = 'FunctionBarMediator'
+
+FunctionBarMediator.ListNotificationInterests = {}
+
+FunctionBarMediator.HandleNotification = function(notification)
+	local name = notification.Name
+	local body = notification.Body  
+end
+
+return FunctionBarMediator
